@@ -1,35 +1,3 @@
-var speed = [3000, 2500, 2000, 1500, 1000, 600, 300];
-var curHour = 10;
-var interval = speed[4];
-var playControl = false;
-
-function filterBy(h) {
-    
-    var filters;
-
-    if(h==24){
-        filters = ['in', 'hour', 0, 23];
-        document.getElementById('time').textContent = "23:00-0:00";
-    }else{
-        filters = ['in', 'hour', h, h-1];
-        document.getElementById('time').textContent = String(h-1) + ":00-" + String(h) + ":00";
-    }
-    
-    map.setFilter('bus_circle', filters);
-    map.setFilter('subway_circle', filters);
-    map.setFilter('taxi_circle', filters);
-}
-
-
-function setSpeed() {
-    if(playControl == true){
-        curHour = curHour % 24 + 1;
-        slider.value = curHour;
-        filterBy(curHour);
-        setTimeout(setSpeed, interval);
-    }
-}
-
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0NHF4d2U4bWQya2cifQ.gMTSB1UQhBLpAG9eRdSDdg';
 const map = new mapboxgl.Map({
     container: 'map',
@@ -106,6 +74,40 @@ map.on('load', function () {
     filterBy(curHour);
 
 });
+
+
+var speed = [3000, 2500, 2000, 1500, 1000, 600, 300];
+var curHour = 10;
+var interval = speed[4];
+var playControl = false;
+
+function filterBy(h) {
+    
+    var filters;
+
+    if(h==24){
+        filters = ['in', 'hour', 0, 23];
+        document.getElementById('time').textContent = "23:00-0:00";
+    }else{
+        filters = ['in', 'hour', h, h-1];
+        document.getElementById('time').textContent = String(h-1) + ":00-" + String(h) + ":00";
+    }
+    
+    map.setFilter('bus_circle', filters);
+    map.setFilter('subway_circle', filters);
+    map.setFilter('taxi_circle', filters);
+}
+
+
+function setSpeed() {
+    if(playControl == true){
+        curHour = curHour % 24 + 1;
+        slider.value = curHour;
+        filterBy(curHour);
+        setTimeout(setSpeed, interval);
+        chartUpdate();
+    }
+}
 
 
 //通过时间过滤

@@ -171,7 +171,7 @@
 
                 <div class='desc'>Time</div>
                 <div class='time' id='time'>0:00-1:00</div>
-                <input id='slider' type='range' min='1' max='24' step='1' value='10'/>
+                <input id='slider' type='range' min='1' max='24' step='1' value='10' onchange="chartUpdate(this.value)"/>
 
                 <div class='desc' style='margin-bottom: 10px; margin-top: 20px; width: 25%;'>Speed</div>
                 <input class='speed' id='speed' type='range' min='1' max='7' step='1' value='4' />
