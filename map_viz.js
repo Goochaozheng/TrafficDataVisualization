@@ -66,8 +66,8 @@ map.on('load', function () {
         'paint': {
             'circle-color': '#ef834e',
             'circle-opacity': 0.75,
-            'circle-radius': 4,
-            'circle-blur': 1
+            'circle-radius': 5,
+            'circle-blur': 1.5
         }
     });
 
@@ -79,8 +79,8 @@ map.on('load', function () {
         'paint': {
             'circle-color': '#007bff',
             'circle-opacity': 0.75,
-            'circle-radius': 4,
-            'circle-blur': 1
+            'circle-radius': 5,
+            'circle-blur': 1.5
         }
     });
 
@@ -91,7 +91,7 @@ map.on('load', function () {
         'icon-allow-overlap': true,
         'paint': {
             'circle-color': '#43B455',
-            'circle-opacity': 0.75,
+            'circle-opacity': 0.5,
             'circle-radius': [
                 'interpolate',
                 ['linear'],
@@ -99,13 +99,7 @@ map.on('load', function () {
                 1, 3,
                 150, 30
             ],
-            'circle-blur':[
-                'interpolate',
-                ['linear'],
-                ['get', 'count'],
-                100, 1,
-                600, 5
-            ]
+            'circle-blur': 0.5
         }
     });
 
@@ -113,24 +107,6 @@ map.on('load', function () {
 
 });
 
-//初始显示图层
-if($("#busControlInput").is(":checked")){
-    map.setLayoutProperty('bus_circle', 'visibility', 'visible');
-}else{
-    map.setLayoutProperty('bus_circle', 'visibility', 'none');
-}
-
-if($("#subwayControlInput").is(":checked")){
-    map.setLayoutProperty('subway_circle', 'visibility', 'visible');
-}else{
-    map.setLayoutProperty('subway_circle', 'visibility', 'none');
-}
-
-if($("#taxiControlInput").is(":checked")){
-    map.setLayoutProperty('taxi_circle', 'visibility', 'visible');
-}else{
-    map.setLayoutProperty('taxi_circle', 'visibility', 'none');
-}
 
 //通过时间过滤
 document.getElementById('slider').addEventListener('input', function (e) {
