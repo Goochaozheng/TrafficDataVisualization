@@ -16,6 +16,7 @@ function filterBy(h) {
     }
     
     map.setFilter('bus_circle', filters);
+    map.setFilter('subway_circle', filters);
 }
 
 
@@ -45,10 +46,10 @@ map.on('load', function () {
         'data': 'bus_parsed.geojson'
     });
 
-    // map.addSource('subway', {
-    //     'type': 'geojson',
-    //     'data': 'subway_parsed.geojson'
-    // });
+    map.addSource('subway', {
+        'type': 'geojson',
+        'data': 'subway_parsed.geojson'
+    });
 
     map.addLayer({
         'id': 'bus_circle',
@@ -63,15 +64,30 @@ map.on('load', function () {
         }
     });
 
-    // map.addLayer({
-    //     'id': 'subway_circle',
-    //     'type': 'circle',
-    //     'source': 'subway',
-    //     'icon-allow-overlap': true,
-    //     'paint': {
-    //         'circle-color': 
-    //     }
-    // });
+    map.addLayer({
+        'id': 'subway_circle',
+        'type': 'circle',
+        'source': 'subway',
+        'icon-allow-overlap': true,
+        'paint': {
+            'circle-color': '#43B455',
+            'circle-opacity': 0.75,
+            'circle-radius': [
+                'interpolate',
+                ['linear'],
+                ['get', 'count'],
+                1, 3,
+                150, 30
+            ],
+            'circle-blur':[
+                'interpolate',
+                ['linear'],
+                ['get', 'count'],
+                100, 1,
+                600, 5
+            ]
+        }
+    });
 
     filterBy(curHour);
 
@@ -109,5 +125,14 @@ document.getElementById('busControlInput').onclick = function(){
         map.setLayoutProperty('bus_circle', 'visibility', 'none');
     } else {
         map.setLayoutProperty('bus_circle', 'visibility', 'visible');
+    }
+}
+
+document.getElementById('subwayControlInput').onclick = function(){
+    var visibility = map.getLayoutProperty('subway_circle', 'visibility');
+    if (visibility === 'visible') {
+        map.setLayoutProperty('subway_circle', 'visibility', 'none');
+    } else {
+        map.setLayoutProperty('subway_circle', 'visibility', 'visible');
     }
 }
