@@ -14,7 +14,7 @@ var option = {
         trigger: 'item'
     },
     xAxis:{
-        data: ['Bus', 'Taxi', 'Subway', 'Pedestrain'],
+        data: ['Bus', 'Taxi', 'Subway', 'Truck'],
         show: false
     },
     yAxis:{

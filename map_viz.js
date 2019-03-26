@@ -12,30 +12,43 @@ map.on('load', function () {
 
     map.addSource('bus', {
         'type': 'geojson',
-        'data': 'bus_parsed_lite.geojson'
+        'data': 'geojson/bus.geojson'
     });
 
     map.addSource('taxi', {
         'type': 'geojson',
-        'data': 'taxi_parsed_sample.geojson'
+        'data': 'geojson/taxi.geojson'
     });
 
     map.addSource('subway', {
         'type': 'geojson',
-        'data': 'subway_parsed.geojson'
+        'data': 'geojson/subway.geojson'
+    });
+
+    map.addSource('truck', {
+        'type': 'geojson',
+        'data': 'geojson/truck.geojson'
     });
 
 
+    //ÃÌº”Õº≤„
     map.addLayer({
-        'id': 'bus_circle',
+        'id': 'truck_circle',
         'type': 'circle',
-        'source': 'bus',
+        'source': 'truck',
         'icon-allow-overlap': true,
         'paint': {
-            'circle-color': '#ef834e',
+            'circle-color': '#E6A3E6',
             'circle-opacity': 0.75,
-            'circle-radius': 5,
-            'circle-blur': 1.5
+            'circle-radius': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                10, 1,
+                13, 2.5,
+                15, 5
+            ],
+            'circle-blur': 0
         }
     });
 
@@ -47,8 +60,35 @@ map.on('load', function () {
         'paint': {
             'circle-color': '#007bff',
             'circle-opacity': 0.75,
-            'circle-radius': 5,
-            'circle-blur': 1.5
+            'circle-radius': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                10, 1,
+                13, 2.5,
+                15, 5
+            ],
+            'circle-blur': 0
+        }
+    });
+
+    map.addLayer({
+        'id': 'bus_circle',
+        'type': 'circle',
+        'source': 'bus',
+        'icon-allow-overlap': true,
+        'paint': {
+            'circle-color': '#ef834e',
+            'circle-opacity': 0.75,
+            'circle-radius': [
+                'interpolate',
+                ['linear'],
+                ['zoom'],
+                10, 1,
+                13, 2.5,
+                15, 5
+            ],
+            'circle-blur': 0
         }
     });
 
@@ -59,7 +99,7 @@ map.on('load', function () {
         'icon-allow-overlap': true,
         'paint': {
             'circle-color': '#43B455',
-            'circle-opacity': 0.5,
+            'circle-opacity': 0.4,
             'circle-radius': [
                 'interpolate',
                 ['linear'],
@@ -67,7 +107,7 @@ map.on('load', function () {
                 1, 3,
                 150, 30
             ],
-            'circle-blur': 0.5
+            'circle-blur': 0
         }
     });
 
@@ -96,6 +136,7 @@ function filterBy(h) {
     map.setFilter('bus_circle', filters);
     map.setFilter('subway_circle', filters);
     map.setFilter('taxi_circle', filters);
+    map.setFilter('truck_circle', filters);
 }
 
 
@@ -160,6 +201,14 @@ $('#taxiControlInput').change(function(){
         map.setLayoutProperty('taxi_circle', 'visibility', 'visible');
     }else{
         map.setLayoutProperty('taxi_circle', 'visibility', 'none');
+    }
+})
+
+$('#truckControlInput').change(function(){
+    if($("#truckControlInput").is(":checked")){
+        map.setLayoutProperty('truck_circle', 'visibility', 'visible');
+    }else{
+        map.setLayoutProperty('truck_circle', 'visibility', 'none');
     }
 })
 

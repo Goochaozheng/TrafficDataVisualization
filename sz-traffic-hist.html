@@ -102,18 +102,17 @@
             background-color: rgb(67, 180, 85);
         }
 
-        #pedestrianControlInput:checked~#pedestrainControlLabel::before {
+        #truckControlInput:checked~#truckControlLabel::before {
             color: #fff;
             border-color: rgb(230, 163, 230);
             background-color: rgb(230, 163, 230);
         }
 
-        .time{
+        #time{
             font-family: 'Helvetica Neue', sans-serif;
             font-size: 40px;
-            height: 40px;
-            vertical-align: middle;
-            margin-bottom: 10px;
+            height: 100%;
+            line-height: 50px;
         }
 
         .desc{
@@ -170,7 +169,7 @@
                 <button type="button" class='ctrBtn' id="pauseButton" style="display:inline">Pause</button>
 
                 <div class='desc'>Time</div>
-                <div class='time' id='time'>0:00-1:00</div>
+                <h2 class='time' id='time'>0:00-1:00</h2>
                 <input id='slider' type='range' min='1' max='24' step='1' value='10' onchange="chartUpdate(this.value)"/>
 
                 <div class='desc' style='margin-bottom: 10px; margin-top: 20px; width: 25%;'>Speed</div>
@@ -219,12 +218,12 @@
                 </li>
                 <li class="list-group-item">
 
-                    <span>Pedestrian</span>
+                    <span>Truck</span>
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;">
-                            <input type="checkbox" class="custom-control-input"  id="pedestrianControlInput" checked>
-                            <label class="custom-control-label" style="top:-3px;"  for="pedestrianControlInput" id="pedestrainControlLabel"></label>
+                            <input type="checkbox" class="custom-control-input"  id="truckControlInput" checked>
+                            <label class="custom-control-label" style="top:-3px;"  for="truckControlInput" id="truckControlLabel"></label>
                         </div> 
                     </span>                   
                 </li>
@@ -232,6 +231,7 @@
         </div>       
 
         <div class='map-overlay-inner' style="margin-top:10px">
+            <div class='desc' style="margin-top:10px">Magnitude</div>
             <div id="chart" style="height: 200px"></div>
         </div>
 
