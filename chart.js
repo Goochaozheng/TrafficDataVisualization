@@ -20,8 +20,6 @@ $.getJSON("data/hour_count.json", function(res){
 
 })
 
-console.log(bus_count);
-
 var chart = echarts.init(document.getElementById("chart"));
 
 var option = {
@@ -44,10 +42,10 @@ var option = {
     series:[{
         type: 'bar',
         data: [
-            bus_count[parseInt(curHour)],
-            taxi_count[parseInt(curHour)],
-            subway_count[parseInt(curHour)],
-            truck_count[parseInt(curHour)]
+            bus_count[curHour],
+            taxi_count[curHour],
+            subway_count[curHour],
+            truck_count[curHour]
         ],
         itemStyle:{
             normal:{
