@@ -12,22 +12,22 @@ map.on('load', function () {
 
     map.addSource('bus', {
         'type': 'geojson',
-        'data': 'geojson/bus.geojson'
+        'data': 'data/bus.geojson'
     });
 
     map.addSource('taxi', {
         'type': 'geojson',
-        'data': 'geojson/taxi.geojson'
+        'data': 'data/taxi.geojson'
     });
 
     map.addSource('subway', {
         'type': 'geojson',
-        'data': 'geojson/subway.geojson'
+        'data': 'data/subway.geojson'
     });
 
     map.addSource('truck', {
         'type': 'geojson',
-        'data': 'geojson/truck.geojson'
+        'data': 'data/truck.geojson'
     });
 
 
@@ -125,12 +125,12 @@ function filterBy(h) {
     
     var filters;
 
-    if(h==24){
-        filters = ['in', 'hour', 0, 23];
+    if(h==23){
+        filters = ['in', 'hour', 23, 0];
         document.getElementById('time').textContent = "23:00-0:00";
     }else{
-        filters = ['in', 'hour', h, h-1];
-        document.getElementById('time').textContent = String(h-1) + ":00-" + String(h) + ":00";
+        filters = ['in', 'hour', h, h+1];
+        document.getElementById('time').textContent = String(h) + ":00-" + String(h+1) + ":00";
     }
     
     map.setFilter('bus_circle', filters);
@@ -142,7 +142,7 @@ function filterBy(h) {
 
 function setSpeed() {
     if(playControl == true){
-        curHour = curHour % 24 + 1;
+        curHour = (curHour + 1) % 24;
         slider.value = curHour;
         filterBy(curHour);
         setTimeout(setSpeed, interval);

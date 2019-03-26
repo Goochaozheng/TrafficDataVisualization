@@ -8,7 +8,6 @@
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
     <script src='lib/jquery-3.3.1.js'></script>    
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="lib/bootstrap-switch.min.js"></script>
     <script src="lib/echarts.min.js"></script>
 
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
@@ -168,7 +167,7 @@
 
                 <div class='desc'>Time</div>
                 <h2 class='time' id='time'>0:00-1:00</h2>
-                <input id='slider' type='range' min='1' max='24' step='1' value='10' onchange="chartUpdate(this.value)"/>
+                <input id='slider' type='range' min='0' max='23' step='1' value='10' onchange="chartUpdate(this.value)"/>
 
                 <div class='desc' style='margin-bottom: 10px; margin-top: 20px; width: 25%;'>Speed</div>
                 <input class='speed' id='speed' type='range' min='1' max='7' step='1' value='4' />

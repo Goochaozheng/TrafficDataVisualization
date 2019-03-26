@@ -1,5 +1,26 @@
+var bus_count, taxi_count, subway_count, truck_count;
 
-var bus_count = [130, 123 ,300, 400, 500, 100, 200, 300, 400, 500, 100, 200, 130, 123 ,300, 400, 500, 100, 200, 300, 400, 500, 100, 200];
+$.ajaxSettings.async = false;
+$.getJSON("data/hour_count.json", function(res){
+
+    $.each(res.data, function(i, field){
+        if(field.type == 'bus'){
+            bus_count = field.count;
+        }
+        if(field.type == 'taxi'){
+            taxi_count = field.count;
+        }
+        if(field.type == 'subway'){
+            subway_count = field.count;
+        }
+        if(field.type == 'truck'){
+            truck_count = field.count;
+        }
+    });
+
+})
+
+console.log(bus_count);
 
 var chart = echarts.init(document.getElementById("chart"));
 
@@ -23,10 +44,10 @@ var option = {
     series:[{
         type: 'bar',
         data: [
-            bus_count[curHour-1],
-            bus_count[(curHour+2) % 24],
-            bus_count[(curHour+5) % 24],
-            bus_count[(curHour+3) % 24]
+            bus_count[parseInt(curHour)],
+            taxi_count[parseInt(curHour)],
+            subway_count[parseInt(curHour)],
+            truck_count[parseInt(curHour)]
         ],
         itemStyle:{
             normal:{
@@ -49,21 +70,12 @@ var chartUpdate = function () {
 
     option = {
         series:[{
-            type: 'bar',
             data: [
-                bus_count[curHour-1],
-                bus_count[(curHour+2) % 24],
-                bus_count[(curHour+5) % 24],
-                bus_count[(curHour+3) % 24]
-            ],
-            itemStyle:{
-                normal:{
-                    color: function(params){
-                        var colors = ['#ef834e', '#007bff', '#43B455', '#E6A3E6'];
-                        return colors[params.dataIndex]
-                    }                
-                }
-            }
+                bus_count[curHour],
+                taxi_count[curHour],
+                subway_count[curHour],
+                truck_count[curHour]
+            ]
         }]
     };
     chart.setOption(option);
