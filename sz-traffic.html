@@ -56,36 +56,62 @@
         }
 
 
-        button{
+        .ctrBtn{
             appearance: none;
             background-color:  rgb(95, 95, 95);
             border-radius: 5px;
             border-width: 0;
-            color:aliceblue;
+            color:rgb(255, 255, 255);
             margin-right: 10px;
-            height: 30px;
-            width: 60px;
-            outline: none;
+            width: 80px;
             margin-bottom: 15px;
             box-shadow:none;
         }
 
-        button:hover{
-            background-color:  rgb(121, 120, 120);
+        .ctrBtn:hover{
+            background-color:  rgb(51, 51, 51);
+            color: rgb(255, 255, 255);
         }
 
-        button:active{
+        .ctrBtn:active{
             background-color:  rgb(66, 66, 66);
+            color: rgb(255, 255, 255);
         }
 
-        button:disabled{
-            background-color: rgb(179, 179, 179);
+        .ctrBtn:disabled{
+            background-color: rgb(190, 190, 190);
+            color: rgb(255, 255, 255);
         }
 
-        button:focus{
-            outline: none;
+
+        .chartBtn{
+            appearance: none;
+            background-color:  rgb(95, 95, 95);
+            color: rgb(255, 255, 255);
+            width: 50px;
+            border-radius: 5px;
+            border-width: 0;
+            box-shadow:none;
         }
 
+        .chartBtn:hover{
+            background-color:  rgb(51, 51, 51);
+            color: rgb(255, 255, 255);
+        }
+
+        .chartBtn:active{
+            background-color:  rgb(66, 66, 66);
+            color: rgb(255, 255, 255);
+        }
+
+        .chartBtn:disabled{
+            background-color: rgb(190, 190, 190);
+            color: rgb(255, 255, 255);
+        }
+
+        .chartBtn:focus{
+            outline:none;
+        }
 
         #busControlInput:checked~#busControlLabel::before {
             color: #fff;
@@ -174,8 +200,8 @@
 
             <div class='playControl'>
                 
-                <button type="button" class='ctrBtn' id="playButton" style="display:inline">Play</button>
-                <button type="button" class='ctrBtn' id="pauseButton" style="display:inline">Pause</button>
+                <button type="button" class='btn ctrBtn' id="playButton" style="display:inline">Play</button>
+                <button type="button" class='btn ctrBtn' id="pauseButton" style="display:inline">Pause</button>
 
                 <div class='desc'>Time</div>
                 <h2 class='time' id='time'>0:00-1:00</h2>
@@ -242,6 +268,14 @@
         <div class='map-overlay-inner' style="margin-top:10px">
             <div class='desc' style="margin-top:10px">Magnitude</div>
             <div id="chart" style="height: 200px"></div>
+
+            <div style="margin-top: 10px; margin-bottom:10px; text-align:center;">
+                <div class="btn-group" role="group" aria-label="Basic example" style="width: 50%">
+                    <button type="button" class="btn chartBtn" id="barBtn" disabled>Bar</button>
+                    <button type="button" class="btn chartBtn" id="lineBtn">Line</button>
+                    <button type="button" class="btn chartBtn" id="pieBtn">Pie</button>
+                </div>
+            </div>
         </div>
 
     </div>
