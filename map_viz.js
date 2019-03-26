@@ -5,7 +5,7 @@ const map = new mapboxgl.Map({
     center: [114.0579, 22.5431],
     zoom: 13,
     maxZoom: 15,
-    minZoom: 11.5,
+    minZoom: 10,
 });
 
 map.on('load', function () {
@@ -17,7 +17,7 @@ map.on('load', function () {
 
     map.addSource('taxi', {
         'type': 'geojson',
-        'data': 'taxi_parsed.geojson'
+        'data': 'taxi_parsed_sample.geojson'
     });
 
     map.addSource('subway', {

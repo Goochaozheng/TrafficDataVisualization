@@ -6,9 +6,9 @@ var chart = echarts.init(document.getElementById("chart"));
 var option = {
     grid:{
         x: 10,
-        y: 10,
+        y: 30,
         x2: 10,
-        y2: 20
+        y2: 15
     },
     tooltip:{
         trigger: 'item'
