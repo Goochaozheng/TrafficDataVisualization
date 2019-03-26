@@ -115,6 +115,35 @@ map.on('load', function () {
 
 });
 
+var popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false
+});
+
+map.on('mouseenter', 'subway_circle', function(e) {
+
+    map.getCanvas().style.cursor = 'pointer';
+     
+    var coordinates = e.features[0].geometry.coordinates.slice();
+    var description = e.features[0].properties.station;
+    var count = e.features[0].properties.count;
+     
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+     
+    popup.setLngLat(coordinates)
+    .setHTML(
+        "<span class='station'>" + description + ": </span>" + 
+        "<span>" + count + "</span>"
+    )
+    .addTo(map);
+});
+
+map.on('mouseleave', 'subway_circle', function() {
+    map.getCanvas().style.cursor = '';
+    popup.remove();
+});
 
 var speed = [3000, 2500, 2000, 1500, 1000, 600, 300];
 var curHour = 10;
