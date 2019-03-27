@@ -67,7 +67,7 @@ window.onresize = function(){
 
 var chartUpdate = function () {
     
-    //Update with bar chart
+    //Update as bar chart
     if(chartType == 0){
         option = {
             grid:{
@@ -107,6 +107,7 @@ var chartUpdate = function () {
     }
 
 
+    //Update as line chart
     if(chartType == 1){
 
         var h0, h1, h2, h3, h4;
@@ -118,16 +119,17 @@ var chartUpdate = function () {
 
         option = {
             grid:{
-                x: 10,
+                x: 0,
                 y: 30,
-                x2: 10,
+                x2: 0,
                 y2: 30
             },
             yAxis:{
                 type: 'value',
                 show: false,
                 sacle: false,
-                max: 13000
+                max: 10000,
+                min: 0
             },
             xAxis:{
                 type: 'category',
@@ -162,6 +164,8 @@ var chartUpdate = function () {
         };
     }
 
+
+    //Update as pie chart
     if(chartType == 2){
         option = {
             grid:{
