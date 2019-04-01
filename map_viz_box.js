@@ -123,7 +123,8 @@ var canvas = map.getCanvasContainer();
 var start;
 var startLnglat;
 var current;
-var box;
+var box = null;
+var curbbox = null;
 
 map.boxZoom.disable();
 
@@ -136,8 +137,8 @@ map.on('zoom', function(){
         boxPopup.remove();
         box.parentNode.removeChild(box);
         box = null;
+        curbbox = null;
     }
-    boxPopup.remove();
 })
 
 map.on('mousedown', function(e){
@@ -149,8 +150,8 @@ canvas.addEventListener('mousedown', mouseDown, true);
 function mousePos(e) {
     var rect = canvas.getBoundingClientRect();
     return new mapboxgl.Point(
-    e.clientX - rect.left - canvas.clientLeft,
-    e.clientY - rect.top - canvas.clientTop
+        e.clientX - rect.left - canvas.clientLeft,
+        e.clientY - rect.top - canvas.clientTop
     );
 }
 
@@ -160,6 +161,7 @@ function mouseDown(e) {
         boxPopup.remove();
         box.parentNode.removeChild(box);
         box = null;
+        curbbox = null;
     }
 
     // Continue the rest of the function if the shiftkey is pressed.
@@ -203,61 +205,72 @@ function onMouseMove(e) {
 
 function onMouseUp(e) {
     // Capture xy coordinates
-    finish([start, mousePos(e)]);
+    curbbox = [start, mousePos(e)]
+    boxCount();
 }
 
 function onKeyDown(e) {
     // If the ESC key is pressed
-    if (e.keyCode === 27) finish();
+    if (e.keyCode === 27) boxCount();
 }
 
-function finish(bbox) {
+function boxCount() {
     // Remove these events now that finish has been called.
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('keydown', onKeyDown);
     document.removeEventListener('mouseup', onMouseUp);
      
     // If bbox exists. use this value as the argument for `queryRenderedFeatures`
-    if (bbox) {
-        var busCount = map.queryRenderedFeatures(bbox, { layers: ['bus_circle'] }).length;
-        var taxiCount = map.queryRenderedFeatures(bbox, { layers: ['taxi_circle'] }).length;
-        var truckCount = map.queryRenderedFeatures(bbox, { layers: ['truck_circle'] }).length;
+    if (curbbox) {
+        var busCount = map.queryRenderedFeatures(curbbox, { layers: ['bus_circle'] }).length;
+        var taxiCount = map.queryRenderedFeatures(curbbox, { layers: ['taxi_circle'] }).length;
+        var truckCount = map.queryRenderedFeatures(curbbox, { layers: ['truck_circle'] }).length;
         var subwayCount = 0;
 
-        var subwayFeatures = map.queryRenderedFeatures(bbox, { layers: ['subway_circle'] });
+        var subwayFeatures = map.queryRenderedFeatures(curbbox, { layers: ['subway_circle'] });
         for(var i=0; i<subwayFeatures.length; i++){
             subwayCount += subwayFeatures[i].properties.count;
         }
 
+        var busRatio, taxiRatio, subwayRatio, truckRatio;
         var sum = busCount + taxiCount + truckCount + subwayCount;
-        var busRatio = (busCount * 100 / sum).toFixed(2);
-        var taxiRatio = (taxiCount * 100/ sum).toFixed(2);
-        var subwayRatio = (subwayCount * 100/ sum).toFixed(2);
-        var truckRatio = (truckCount * 100/ sum).toFixed(2);
+        if(sum != 0){
+            busRatio = (busCount * 100 / sum).toFixed(2);
+            taxiRatio = (taxiCount * 100/ sum).toFixed(2);
+            subwayRatio = (subwayCount * 100/ sum).toFixed(2);
+            truckRatio = (truckCount * 100/ sum).toFixed(2);
+        }else{
+            busRatio = 0;
+            taxiRatio = 0;
+            subwayRatio = 0;
+            truckRatio = 0;
+        }
+
+
+        var text = '';
+
+        if(busVisibale){
+            text += "<span class='bus'>Bus: </span><span>" + busRatio + "%</span><span> (" + busCount + ")</span><br/>";
+        }
+        if(taxiVisibale){
+            text += "<span class='taxi'>Taxi: </span><span>" + taxiRatio + "%</span><span> (" + taxiCount + ")</span><br/>";
+        }
+        if(subwayVisibale){
+            text += "<span class='subway'>Subway: </span><span>" + subwayRatio + "%</span><span> (" + subwayCount + ")</span><br/>";
+        }
+        if(truckVisibale){
+            text +=  "<span class='truck'>Truck: </span><span>" + truckRatio + "%</span><span> (" + truckCount + ")</span><br/>";
+        }
+    
+        if(busVisibale || taxiVisibale || subwayVisibale || truckVisibale){
+            boxPopup.setLngLat(startLnglat)
+            .setHTML(text)
+            .addTo(map);
+        }
+         
+        map.dragPan.enable();
     }
 
-    var text = '';
-
-    if(busVisibale){
-        text += "<span class='bus'>Bus: </span><span>" + busRatio + "%</span><span> (" + busCount + ")</span><br/>";
-    }
-    if(taxiVisibale){
-        text += "<span class='taxi'>Taxi: </span><span>" + taxiRatio + "%</span><span> (" + taxiCount + ")</span><br/>";
-    }
-    if(subwayVisibale){
-        text += "<span class='subway'>Subway: </span><span>" + subwayRatio + "%</span><span> (" + subwayCount + ")</span><br/>";
-    }
-    if(truckVisibale){
-        text +=  "<span class='truck'>Truck: </span><span>" + truckRatio + "%</span><span> (" + truckCount + ")</span><br/>";
-    }
-
-    if(busVisibale || taxiVisibale || subwayVisibale || truckVisibale){
-        boxPopup.setLngLat(startLnglat)
-        .setHTML(text)
-        .addTo(map);
-    }
-     
-    map.dragPan.enable();
 }
 
 
@@ -333,8 +346,9 @@ function setSpeed() {
         curHour = (curHour + 1) % 24;
         slider.value = curHour;
         filterBy(curHour);
-        setTimeout(setSpeed, interval);
         chartUpdate();
+        boxCount();
+        setTimeout(setSpeed, interval);
     }
 }
 
@@ -365,7 +379,7 @@ document.getElementById('speed').addEventListener('input', function (e) {
 
 
 //layers control
-$('#busControlInput').change(function(){
+document.getElementById('busControlInput').addEventListener('change', function(){
     if($("#busControlInput").is(":checked")){
         map.setLayoutProperty('bus_circle', 'visibility', 'visible');
         busVisibale = true;
@@ -373,9 +387,12 @@ $('#busControlInput').change(function(){
         map.setLayoutProperty('bus_circle', 'visibility', 'none');
         busVisibale = false;
     }
+    map.on('idle', function(){
+        boxCount()
+    });
 })
 
-$('#subwayControlInput').change(function(){
+document.getElementById('subwayControlInput').addEventListener('change', function(){
     if($("#subwayControlInput").is(":checked")){
         map.setLayoutProperty('subway_circle', 'visibility', 'visible');
         subwayVisibale = true;
@@ -383,9 +400,12 @@ $('#subwayControlInput').change(function(){
         map.setLayoutProperty('subway_circle', 'visibility', 'none');
         subwayVisibale = false;
     }
+    map.on('idle', function(){
+        boxCount()
+    });
 })
 
-$('#taxiControlInput').change(function(){
+document.getElementById('taxiControlInput').addEventListener('change', function(){
     if($("#taxiControlInput").is(":checked")){
         map.setLayoutProperty('taxi_circle', 'visibility', 'visible');
         taxiVisibale = true;
@@ -393,9 +413,12 @@ $('#taxiControlInput').change(function(){
         map.setLayoutProperty('taxi_circle', 'visibility', 'none');
         taxiVisibale = false;
     }
+    map.on('idle', function(){
+        boxCount()
+    });
 })
 
-$('#truckControlInput').change(function(){
+document.getElementById('truckControlInput').addEventListener('change', function(){
     if($("#truckControlInput").is(":checked")){
         map.setLayoutProperty('truck_circle', 'visibility', 'visible');
         truckVisibale = true;
@@ -403,5 +426,8 @@ $('#truckControlInput').change(function(){
         map.setLayoutProperty('truck_circle', 'visibility', 'none');
         truckVisibale = false;
     }
+    map.on('idle', function(){
+        boxCount()
+    });
 })
 
