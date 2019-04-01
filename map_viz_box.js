@@ -8,13 +8,6 @@ const map = new mapboxgl.Map({
     minZoom: 10,
 });
 
-map.boxZoom.disable();
-
-var boxPopup = new mapboxgl.Popup({
-    closeButton: false
-});
-
-
 map.on('load', function () {
 
     map.addSource('bus', {
@@ -110,7 +103,7 @@ map.on('load', function () {
                 ['linear'],
                 ['get', 'count'],
                 0, 0,
-                150, 30
+                300, 30
             ],
             'circle-blur': 0
         }
@@ -121,11 +114,31 @@ map.on('load', function () {
 
 });
 
+var busVisibale = true;
+var taxiVisibale = true;
+var subwayVisibale = true;
+var truckVisibale = true;
+
 var canvas = map.getCanvasContainer();
 var start;
 var startLnglat;
 var current;
 var box;
+
+map.boxZoom.disable();
+
+var boxPopup = new mapboxgl.Popup({
+    closeButton: false
+});
+
+map.on('zoom', function(){
+    if(box){
+        boxPopup.remove();
+        box.parentNode.removeChild(box);
+        box = null;
+    }
+    boxPopup.remove();
+})
 
 map.on('mousedown', function(e){
     startLnglat = e.lngLat;
@@ -223,19 +236,29 @@ function finish(bbox) {
         var truckRatio = (truckCount * 100/ sum).toFixed(2);
     }
 
-    var text = 
-    "<span class='bus'>Bus: " + busRatio + "%</span><span> (" + busCount + ")</span><br/>" + 
-    "<span class='taxi'>Taxi: " + taxiRatio + "%</span><span> (" + taxiCount + ")</span><br/>" + 
-    "<span class='subway'>Subway: " + subwayRatio + "%</span><span> (" + subwayCount + ")</span><br/>" + 
-    "<span class='truck'>Truck: " + truckRatio + "%</span><span> (" + truckCount + ")</span><br/>";
+    var text = '';
 
-    boxPopup.setLngLat(startLnglat)
-    .setHTML(text)
-    .addTo(map);
+    if(busVisibale){
+        text += "<span class='bus'>Bus: </span><span>" + busRatio + "%</span><span> (" + busCount + ")</span><br/>";
+    }
+    if(taxiVisibale){
+        text += "<span class='taxi'>Taxi: </span><span>" + taxiRatio + "%</span><span> (" + taxiCount + ")</span><br/>";
+    }
+    if(subwayVisibale){
+        text += "<span class='subway'>Subway: </span><span>" + subwayRatio + "%</span><span> (" + subwayCount + ")</span><br/>";
+    }
+    if(truckVisibale){
+        text +=  "<span class='truck'>Truck: </span><span>" + truckRatio + "%</span><span> (" + truckCount + ")</span><br/>";
+    }
+
+    if(busVisibale || taxiVisibale || subwayVisibale || truckVisibale){
+        boxPopup.setLngLat(startLnglat)
+        .setHTML(text)
+        .addTo(map);
+    }
      
     map.dragPan.enable();
 }
-
 
 
 
@@ -345,32 +368,40 @@ document.getElementById('speed').addEventListener('input', function (e) {
 $('#busControlInput').change(function(){
     if($("#busControlInput").is(":checked")){
         map.setLayoutProperty('bus_circle', 'visibility', 'visible');
+        busVisibale = true;
     }else{
         map.setLayoutProperty('bus_circle', 'visibility', 'none');
+        busVisibale = false;
     }
 })
 
 $('#subwayControlInput').change(function(){
     if($("#subwayControlInput").is(":checked")){
         map.setLayoutProperty('subway_circle', 'visibility', 'visible');
+        subwayVisibale = true;
     }else{
         map.setLayoutProperty('subway_circle', 'visibility', 'none');
+        subwayVisibale = false;
     }
 })
 
 $('#taxiControlInput').change(function(){
     if($("#taxiControlInput").is(":checked")){
         map.setLayoutProperty('taxi_circle', 'visibility', 'visible');
+        taxiVisibale = true;
     }else{
         map.setLayoutProperty('taxi_circle', 'visibility', 'none');
+        taxiVisibale = false;
     }
 })
 
 $('#truckControlInput').change(function(){
     if($("#truckControlInput").is(":checked")){
         map.setLayoutProperty('truck_circle', 'visibility', 'visible');
+        truckVisibale = true;
     }else{
         map.setLayoutProperty('truck_circle', 'visibility', 'none');
+        truckVisibale = false;
     }
 })
 
