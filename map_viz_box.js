@@ -341,14 +341,16 @@ function filterBy(h) {
 
 }
 
-function setSpeed() {
+function update() {
     if(playControl == true){
         curHour = (curHour + 1) % 24;
         slider.value = curHour;
         filterBy(curHour);
         chartUpdate();
-        boxCount();
-        setTimeout(setSpeed, interval);
+        if (curbbox){
+            boxCount();
+        }
+        setTimeout(update, interval);
     }
 }
 
@@ -361,7 +363,7 @@ document.getElementById('playButton').onclick = function(){
     if(playControl == false){
         playControl = true;
         document.getElementById('playButton').setAttribute("disabled", true);
-        setTimeout(setSpeed, interval);
+        setTimeout(update, interval);
     }
 };
 document.getElementById('pauseButton').onclick = function(){
