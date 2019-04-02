@@ -389,9 +389,9 @@ document.getElementById('busControlInput').addEventListener('change', function()
         map.setLayoutProperty('bus_circle', 'visibility', 'none');
         busVisibale = false;
     }
-    map.on('idle', function(){
+    if(map.loaded()){
         boxCount()
-    });
+    }
 })
 
 document.getElementById('subwayControlInput').addEventListener('change', function(){
@@ -402,9 +402,9 @@ document.getElementById('subwayControlInput').addEventListener('change', functio
         map.setLayoutProperty('subway_circle', 'visibility', 'none');
         subwayVisibale = false;
     }
-    map.on('idle', function(){
+    if(map.loaded()){
         boxCount()
-    });
+    }
 })
 
 document.getElementById('taxiControlInput').addEventListener('change', function(){
@@ -415,9 +415,9 @@ document.getElementById('taxiControlInput').addEventListener('change', function(
         map.setLayoutProperty('taxi_circle', 'visibility', 'none');
         taxiVisibale = false;
     }
-    map.on('idle', function(){
+    if(map.loaded()){
         boxCount()
-    });
+    }
 })
 
 document.getElementById('truckControlInput').addEventListener('change', function(){
@@ -428,8 +428,8 @@ document.getElementById('truckControlInput').addEventListener('change', function
         map.setLayoutProperty('truck_circle', 'visibility', 'none');
         truckVisibale = false;
     }
-    map.on('idle', function(){
+    if(map.loaded()){
         boxCount()
-    });
+    }
 })
 
