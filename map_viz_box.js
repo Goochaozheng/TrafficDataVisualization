@@ -247,7 +247,7 @@ function boxCount() {
         }
 
 
-        var text = '<div>Statistics</div>';
+        var text = '<h6>Statistics</h6>';
 
         if(busVisibale){
             text += "<span class='bus'>Bus: </span><span>" + busRatio + "%</span><span> (" + busCount + ")</span><br/>";
