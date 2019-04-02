@@ -114,6 +114,8 @@ map.on('load', function () {
 
 });
 
+
+//drag box & box count
 var busVisibale = true;
 var taxiVisibale = true;
 var subwayVisibale = true;
@@ -362,10 +364,6 @@ document.getElementById('slider').addEventListener('change', function (e) {
     curHour = parseInt(e.target.value)
     filterBy(curHour);
     chartUpdate();
-    // if(curbbox){
-    //     alert("Update")
-    //     boxCount()
-    // }
 });
 
 document.getElementById('playButton').onclick = function(){ 
@@ -397,9 +395,6 @@ document.getElementById('busControlInput').addEventListener('change', function()
         map.setLayoutProperty('bus_circle', 'visibility', 'none');
         busVisibale = false;
     }
-    // if(map.loaded()){
-    //     boxCount()
-    // }
 })
 
 document.getElementById('subwayControlInput').addEventListener('change', function(){
@@ -410,9 +405,6 @@ document.getElementById('subwayControlInput').addEventListener('change', functio
         map.setLayoutProperty('subway_circle', 'visibility', 'none');
         subwayVisibale = false;
     }
-    // if(map.loaded()){
-    //     boxCount()
-    // }
 })
 
 document.getElementById('taxiControlInput').addEventListener('change', function(){
@@ -423,9 +415,6 @@ document.getElementById('taxiControlInput').addEventListener('change', function(
         map.setLayoutProperty('taxi_circle', 'visibility', 'none');
         taxiVisibale = false;
     }
-    // if(map.loaded()){
-    //     boxCount()
-    // }
 })
 
 document.getElementById('truckControlInput').addEventListener('change', function(){
@@ -436,8 +425,5 @@ document.getElementById('truckControlInput').addEventListener('change', function
         map.setLayoutProperty('truck_circle', 'visibility', 'none');
         truckVisibale = false;
     }
-    // if(map.loaded()){
-    //     boxCount()
-    // }
 })
 
