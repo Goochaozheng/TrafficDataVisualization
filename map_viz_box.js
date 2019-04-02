@@ -354,9 +354,13 @@ function update() {
     }
 }
 
-document.getElementById('slider').addEventListener('input', function (e) {
+document.getElementById('slider').addEventListener('change', function (e) {
     curHour = parseInt(e.target.value)
     filterBy(curHour);
+    chartUpdate();
+    if (curbbox){
+        boxCount();
+    }
 });
 
 document.getElementById('playButton').onclick = function(){ 
@@ -370,7 +374,6 @@ document.getElementById('pauseButton').onclick = function(){
     playControl = false;
     document.getElementById('playButton').removeAttribute("disabled");
 };
-
 
 document.getElementById('speed').addEventListener('input', function (e) {
     var num = parseInt(e.target.value, 10);

@@ -65,8 +65,10 @@ window.onresize = function(){
     chart.resize();
 }
 
-var chartUpdate = function () {
+function chartUpdate() {
     
+    console.log("Update");
+
     //Update as bar chart
     if(chartType == 0){
         option = {
