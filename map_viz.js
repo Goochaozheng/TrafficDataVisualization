@@ -8,46 +8,15 @@ const map = new mapboxgl.Map({
     minZoom: 10,
 });
 
-map.on('load', function () {
+function opacityChange(){
+    return 
+}
 
-    map.addSource('bus', {
-        'type': 'geojson',
-        'data': 'data/bus.geojson'
-    });
+map.on('load', function () {
 
     map.addSource('taxi', {
         'type': 'geojson',
-        'data': 'data/taxi.geojson'
-    });
-
-    map.addSource('subway', {
-        'type': 'geojson',
-        'data': 'data/subway.geojson'
-    });
-
-    map.addSource('truck', {
-        'type': 'geojson',
-        'data': 'data/truck.geojson'
-    });
-
-    map.addLayer({
-        'id': 'truck_circle',
-        'type': 'circle',
-        'source': 'truck',
-        'icon-allow-overlap': true,
-        'paint': {
-            'circle-color': '#E6A3E6',
-            'circle-opacity': 0.75,
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                10, 1,
-                13, 2.5,
-                15, 5
-            ],
-            'circle-blur': 0
-        }
+        'data': 'data/taxi_timestamp_22223.geojson'
     });
 
     map.addLayer({
@@ -58,59 +27,21 @@ map.on('load', function () {
         'paint': {
             'circle-color': '#007bff',
             'circle-opacity': 0.75,
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                10, 1,
-                13, 2.5,
-                15, 5
-            ],
-            'circle-blur': 0
-        }
-    });
-
-    map.addLayer({
-        'id': 'bus_circle',
-        'type': 'circle',
-        'source': 'bus',
-        'icon-allow-overlap': true,
-        'paint': {
-            'circle-color': '#ef834e',
-            'circle-opacity': 0.75,
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                10, 1,
-                13, 2.5,
-                15, 5
-            ],
-            'circle-blur': 0
-        }
-    });
-
-    map.addLayer({
-        'id': 'subway_circle',
-        'type': 'circle',
-        'source': 'subway',
-        'icon-allow-overlap': true,
-        'paint': {
-            'circle-color': '#43B455',
-            'circle-opacity': 0.4,
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['get', 'count'],
-                0, 0,
-                300, 30
-            ],
+            'circle-radius': 2,
+            // [
+            //     'interpolate',
+            //     ['linear'],
+            //     ['zoom'],
+            //     10, 1,
+            //     13, 2.5,
+            //     15, 5
+            // ],
             'circle-blur': 0
         }
     });
 
     //filter by time
-    filterBy(curHour);
+    filterBy(curTime);
 
 });
 
@@ -283,94 +214,80 @@ map.on('render', function(){
 
 
 //Subway popup
-var subwayPopup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false
-});
+// var subwayPopup = new mapboxgl.Popup({
+//     closeButton: false,
+//     closeOnClick: false
+// });
 
-map.on('mouseenter', 'subway_circle', function(e) {
+// map.on('mouseenter', 'subway_circle', function(e) {
 
-    map.getCanvas().style.cursor = 'pointer';
+//     map.getCanvas().style.cursor = 'pointer';
      
-    var coordinates = e.features[0].geometry.coordinates.slice();
-    var description = e.features[0].properties.station;
-    var count = 0;
-    for(var i=0; i<e.features.length; i++){
-        count += e.features[i].properties.count;
-    }
+//     var coordinates = e.features[0].geometry.coordinates.slice();
+//     var description = e.features[0].properties.station;
+//     var count = 0;
+//     for(var i=0; i<e.features.length; i++){
+//         count += e.features[i].properties.count;
+//     }
      
-    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-    }
+//     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+//         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+//     }
      
-    subwayPopup.setLngLat(coordinates)
-    .setHTML(
-        "<span class='subway'>" + description + ": </span>" + 
-        "<span>" + count + "</span>"
-    )
-    .addTo(map);
-});
+//     subwayPopup.setLngLat(coordinates)
+//     .setHTML(
+//         "<span class='subway'>" + description + ": </span>" + 
+//         "<span>" + count + "</span>"
+//     )
+//     .addTo(map);
+// });
 
-map.on('mouseleave', 'subway_circle', function() {
-    map.getCanvas().style.cursor = '';
-    subwayPopup.remove();
-});
+// map.on('mouseleave', 'subway_circle', function() {
+//     map.getCanvas().style.cursor = '';
+//     subwayPopup.remove();
+// });
 
 
 
 
 //play control
-var speed = [3000, 2500, 2000, 1500, 1000, 600, 300];
-var curHour = 10;
+var speed = [64, 32, 16, 8, 4, 2, 1];
+var curTime = 10;
 var interval = speed[4];
 var playControl = false;
 
 function filterBy(h) {
     
     var filters;
-
-    if(h==23){
-        filters = ['in', 'hour', 23, 0];
-        document.getElementById('time').textContent = "23:00-0:00";
-    }else{
-        filters = ['in', 'hour', h, h+1];
-        document.getElementById('time').textContent = String(h) + ":00-" + String(h+1) + ":00";
-    }
-    
-    map.setFilter('bus_circle', filters);
+    filters = ['==', 'timestamp', h];
     map.setFilter('taxi_circle', filters);
-    map.setFilter('truck_circle', filters);
-
-
-    filters = ['in', 'hour', h];
-    map.setFilter('subway_circle', filters);
-
+    document.getElementById('time').textContent = parseInt(curTime/60) + ":" + parseInt(curTime%60);
 }
 
 function update() {
     if(playControl == true){
-        curHour = (curHour + 1) % 24;
-        slider.value = curHour;
-        filterBy(curHour);
-        chartUpdate();
+        curTime = (curTime + interval) % 1440;
+        slider.value = curTime;
+        filterBy(curTime);
+        // chartUpdate();
         if (curbbox){
             boxCount();
         }
-        setTimeout(update, interval);
+        setTimeout(update, 50);
     }
 }
 
 document.getElementById('slider').addEventListener('change', function (e) {
-    curHour = parseInt(e.target.value)
-    filterBy(curHour);
-    chartUpdate();
+    curTime = parseInt(e.target.value)
+    filterBy(curTime);
+    // chartUpdate();
 });
 
 document.getElementById('playButton').onclick = function(){ 
     if(playControl == false){
         playControl = true;
         document.getElementById('playButton').setAttribute("disabled", true);
-        setTimeout(update, interval);
+        setTimeout(update, 50);
     }
 };
 document.getElementById('pauseButton').onclick = function(){
