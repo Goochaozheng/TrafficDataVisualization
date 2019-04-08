@@ -55,6 +55,7 @@ $.getJSON("data/taxi_line_hour.json", function(res){
 
     function filterByTime(){
         
+        //Update current time text
         var timeText = '';
         if(curHour < 10){
             timeText = timeText + '0' + curHour + ':';
@@ -69,33 +70,31 @@ $.getJSON("data/taxi_line_hour.json", function(res){
         }
         document.getElementById('time').textContent =  timeText;
 
+        //Update new car track
         if(curHour != preHour){
-
+            
             preHour = curHour
             var newOption = {
                 series:[{
                     effect: {
                         period: (60*timeout)/(interval*1000) 
                     },
-                    data: res.data[curHour]
+                    data: res.data[curHour].concat(res.data[preHour])
                 }]
             };
             mychart.setOption(newOption);
-
         }
     }
 
     function update() {
         if(playControl == true){
+
+            //Update current time & current hour
             curTime = (curTime + interval) % 1440;
             curHour = parseInt(curTime/60);
             document.getElementById('timeSlider').value = curTime;
             filterByTime();
 
-            // chartUpdate();
-            // if (curbbox){
-            //     boxCount();
-            // }
             setTimeout(update, timeout);
         }
     }
