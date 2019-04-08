@@ -30,8 +30,6 @@ map.on('load', function () {
         'data': 'data/truck.geojson'
     });
 
-
-    //添加图层
     map.addLayer({
         'id': 'truck_circle',
         'type': 'circle',
@@ -104,18 +102,188 @@ map.on('load', function () {
                 'interpolate',
                 ['linear'],
                 ['get', 'count'],
-                1, 3,
-                150, 30
+                0, 0,
+                300, 30
             ],
             'circle-blur': 0
         }
     });
 
+    //filter by time
     filterBy(curHour);
 
 });
 
-var popup = new mapboxgl.Popup({
+
+//drag box & box count
+var busVisibale = true;
+var taxiVisibale = true;
+var subwayVisibale = true;
+var truckVisibale = true;
+
+var canvas = map.getCanvasContainer();
+var start;
+var startLnglat;
+var current;
+var box = null;
+var curbbox = null;
+
+map.boxZoom.disable();
+
+var boxPopup = new mapboxgl.Popup({
+    closeButton: false
+});
+
+map.on('zoom', function(){
+    if(box){
+        boxPopup.remove();
+        box.parentNode.removeChild(box);
+        box = null;
+        curbbox = null;
+    }
+})
+
+map.on('mousedown', function(e){
+    startLnglat = e.lngLat;
+});
+
+canvas.addEventListener('mousedown', mouseDown, true);
+
+function mousePos(e) {
+    var rect = canvas.getBoundingClientRect();
+    return new mapboxgl.Point(
+        e.clientX - rect.left - canvas.clientLeft,
+        e.clientY - rect.top - canvas.clientTop
+    );
+}
+
+function mouseDown(e) {
+
+    if(box){
+        boxPopup.remove();
+        box.parentNode.removeChild(box);
+        box = null;
+        curbbox = null;
+    }
+
+    // Continue the rest of the function if the shiftkey is pressed.
+    if (!(e.shiftKey && e.button === 0)) return;
+
+    // Disable default drag zooming when the shift key is held down.
+    map.dragPan.disable();
+     
+    // Call functions for the following events
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('keydown', onKeyDown);
+     
+    // Capture the first xy coordinates
+    start = mousePos(e);
+}
+
+function onMouseMove(e) {
+    // Capture the ongoing xy coordinates
+    current = mousePos(e);
+     
+    // Append the box element if it doesnt exist
+    if (!box) {
+        box = document.createElement('div');
+        box.classList.add('boxdraw');
+        canvas.appendChild(box);
+    }
+     
+    var minX = Math.min(start.x, current.x),
+    maxX = Math.max(start.x, current.x),
+    minY = Math.min(start.y, current.y),
+    maxY = Math.max(start.y, current.y);
+     
+    // Adjust width and xy position of the box element ongoing
+    var pos = 'translate(' + minX + 'px,' + minY + 'px)';
+    box.style.transform = pos;
+    box.style.WebkitTransform = pos;
+    box.style.width = maxX - minX + 'px';
+    box.style.height = maxY - minY + 'px';
+}
+
+function onMouseUp(e) {
+    // Capture xy coordinates
+    curbbox = [start, mousePos(e)]
+    boxCount();
+}
+
+function onKeyDown(e) {
+    // If the ESC key is pressed
+    if (e.keyCode === 27) boxCount();
+}
+
+function boxCount() {
+    // Remove these events now that finish has been called.
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('keydown', onKeyDown);
+    document.removeEventListener('mouseup', onMouseUp);
+     
+    // If bbox exists. use this value as the argument for `queryRenderedFeatures`
+    if (curbbox) {
+        var busCount = map.queryRenderedFeatures(curbbox, { layers: ['bus_circle'] }).length;
+        var taxiCount = map.queryRenderedFeatures(curbbox, { layers: ['taxi_circle'] }).length;
+        var truckCount = map.queryRenderedFeatures(curbbox, { layers: ['truck_circle'] }).length;
+        var subwayCount = 0;
+
+        var subwayFeatures = map.queryRenderedFeatures(curbbox, { layers: ['subway_circle'] });
+        for(var i=0; i<subwayFeatures.length; i++){
+            subwayCount += subwayFeatures[i].properties.count;
+        }
+
+        var busRatio, taxiRatio, subwayRatio, truckRatio;
+        var sum = busCount + taxiCount + truckCount + subwayCount;
+        if(sum != 0){
+            busRatio = (busCount * 100 / sum).toFixed(2);
+            taxiRatio = (taxiCount * 100/ sum).toFixed(2);
+            subwayRatio = (subwayCount * 100/ sum).toFixed(2);
+            truckRatio = (truckCount * 100/ sum).toFixed(2);
+        }else{
+            busRatio = 0;
+            taxiRatio = 0;
+            subwayRatio = 0;
+            truckRatio = 0;
+        }
+
+
+        var text = '<h6>Statistics</h6>';
+
+        if(busVisibale){
+            text += "<span class='bus'>Bus: </span><span>" + busRatio + "%</span><span> (" + busCount + ")</span><br/>";
+        }
+        if(taxiVisibale){
+            text += "<span class='taxi'>Taxi: </span><span>" + taxiRatio + "%</span><span> (" + taxiCount + ")</span><br/>";
+        }
+        if(subwayVisibale){
+            text += "<span class='subway'>Subway: </span><span>" + subwayRatio + "%</span><span> (" + subwayCount + ")</span><br/>";
+        }
+        if(truckVisibale){
+            text +=  "<span class='truck'>Truck: </span><span>" + truckRatio + "%</span><span> (" + truckCount + ")</span><br/>";
+        }
+    
+        if(busVisibale || taxiVisibale || subwayVisibale || truckVisibale){
+            boxPopup.setLngLat(startLnglat)
+            .setHTML(text)
+            .addTo(map);
+        }
+         
+        map.dragPan.enable();
+    }
+
+}
+
+map.on('render', function(){
+    if(curbbox){
+        boxCount();
+    }
+})
+
+
+//Subway popup
+var subwayPopup = new mapboxgl.Popup({
     closeButton: false,
     closeOnClick: false
 });
@@ -126,15 +294,18 @@ map.on('mouseenter', 'subway_circle', function(e) {
      
     var coordinates = e.features[0].geometry.coordinates.slice();
     var description = e.features[0].properties.station;
-    var count = e.features[0].properties.count;
+    var count = 0;
+    for(var i=0; i<e.features.length; i++){
+        count += e.features[i].properties.count;
+    }
      
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
      
-    popup.setLngLat(coordinates)
+    subwayPopup.setLngLat(coordinates)
     .setHTML(
-        "<span class='station'>" + description + ": </span>" + 
+        "<span class='subway'>" + description + ": </span>" + 
         "<span>" + count + "</span>"
     )
     .addTo(map);
@@ -142,9 +313,13 @@ map.on('mouseenter', 'subway_circle', function(e) {
 
 map.on('mouseleave', 'subway_circle', function() {
     map.getCanvas().style.cursor = '';
-    popup.remove();
+    subwayPopup.remove();
 });
 
+
+
+
+//play control
 var speed = [3000, 2500, 2000, 1500, 1000, 600, 300];
 var curHour = 10;
 var interval = speed[4];
@@ -163,35 +338,39 @@ function filterBy(h) {
     }
     
     map.setFilter('bus_circle', filters);
-    map.setFilter('subway_circle', filters);
     map.setFilter('taxi_circle', filters);
     map.setFilter('truck_circle', filters);
+
+
+    filters = ['in', 'hour', h];
+    map.setFilter('subway_circle', filters);
+
 }
 
-
-function setSpeed() {
+function update() {
     if(playControl == true){
         curHour = (curHour + 1) % 24;
         slider.value = curHour;
         filterBy(curHour);
-        setTimeout(setSpeed, interval);
         chartUpdate();
+        if (curbbox){
+            boxCount();
+        }
+        setTimeout(update, interval);
     }
 }
 
-
-//通过时间过滤
-document.getElementById('slider').addEventListener('input', function (e) {
+document.getElementById('slider').addEventListener('change', function (e) {
     curHour = parseInt(e.target.value)
     filterBy(curHour);
+    chartUpdate();
 });
 
-//播放控制
 document.getElementById('playButton').onclick = function(){ 
     if(playControl == false){
         playControl = true;
         document.getElementById('playButton').setAttribute("disabled", true);
-        setTimeout(setSpeed, interval);
+        setTimeout(update, interval);
     }
 };
 document.getElementById('pauseButton').onclick = function(){
@@ -199,8 +378,6 @@ document.getElementById('pauseButton').onclick = function(){
     document.getElementById('playButton').removeAttribute("disabled");
 };
 
-
-//设置播放速度
 document.getElementById('speed').addEventListener('input', function (e) {
     var num = parseInt(e.target.value, 10);
     interval = speed[num - 1];
@@ -208,36 +385,45 @@ document.getElementById('speed').addEventListener('input', function (e) {
 
 
 
-//图层显示选择
-$('#busControlInput').change(function(){
+
+//layers control
+document.getElementById('busControlInput').addEventListener('change', function(){
     if($("#busControlInput").is(":checked")){
         map.setLayoutProperty('bus_circle', 'visibility', 'visible');
+        busVisibale = true;
     }else{
         map.setLayoutProperty('bus_circle', 'visibility', 'none');
+        busVisibale = false;
     }
 })
 
-$('#subwayControlInput').change(function(){
+document.getElementById('subwayControlInput').addEventListener('change', function(){
     if($("#subwayControlInput").is(":checked")){
         map.setLayoutProperty('subway_circle', 'visibility', 'visible');
+        subwayVisibale = true;
     }else{
         map.setLayoutProperty('subway_circle', 'visibility', 'none');
+        subwayVisibale = false;
     }
 })
 
-$('#taxiControlInput').change(function(){
+document.getElementById('taxiControlInput').addEventListener('change', function(){
     if($("#taxiControlInput").is(":checked")){
         map.setLayoutProperty('taxi_circle', 'visibility', 'visible');
+        taxiVisibale = true;
     }else{
         map.setLayoutProperty('taxi_circle', 'visibility', 'none');
+        taxiVisibale = false;
     }
 })
 
-$('#truckControlInput').change(function(){
+document.getElementById('truckControlInput').addEventListener('change', function(){
     if($("#truckControlInput").is(":checked")){
         map.setLayoutProperty('truck_circle', 'visibility', 'visible');
+        truckVisibale = true;
     }else{
         map.setLayoutProperty('truck_circle', 'visibility', 'none');
+        truckVisibale = false;
     }
 })
 
