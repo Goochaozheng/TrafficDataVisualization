@@ -22,12 +22,13 @@ $.getJSON("data/taxi_line_hour.json", function(res){
                 trailLength: 0.3,
                 trailOpacity: 1,
                 spotIntensity: 10,
-                period: 5
+                constantSpeed: 5
             },
             blendMode: 'lighter',
             polyline: true,
             lineStyle: {
                 width: 1,
+                color: '#ff270a',
                 opacity: 0
             },
             data: res.data[0]
