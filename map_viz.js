@@ -23,14 +23,14 @@ $.getJSON("data/taxi_line_2.json", function(res){
             maxZoom: 10.5,
             minZoom: 9.5,
         },
-        // visualMap: {
-        //     type: 'continuous',
-        //     min: 0,
-        //     max: 86399,
-        //     text:['High','Low'],
-        //     realtime: true,
-        //     calculable : true
-        // },
+        visualMap: {
+            type: 'continuous',
+            min: 0,
+            max: 86399,
+            text:['High','Low'],
+            realtime: true,
+            calculable : true
+        },
         series:[{
             type: 'lines3D',
             coordinateSystem: 'mapbox',
