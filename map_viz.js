@@ -1,6 +1,6 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0NHF4d2U4bWQya2cifQ.gMTSB1UQhBLpAG9eRdSDdg';
 
-$.getJSON("data/taxi_line_hour.json", function(res){
+$.getJSON("data/taxi_line_2.json", function(res){
 
     var mychart = echarts.init(document.getElementById('map'));
     //play control
@@ -23,24 +23,33 @@ $.getJSON("data/taxi_line_hour.json", function(res){
             maxZoom: 10.5,
             minZoom: 9.5,
         },
+        // visualMap: {
+        //     type: 'continuous',
+        //     min: 0,
+        //     max: 86399,
+        //     text:['High','Low'],
+        //     realtime: true,
+        //     calculable : true
+        // },
         series:[{
             type: 'lines3D',
             coordinateSystem: 'mapbox',
             effect: {
-                show: false,
-                trailWidth: 1.5,
+                show: true,
+                trailWidth: 0.3,
                 trailLength: 0.8,
                 trailOpacity: 0.5,
-                period: (60*timeout)/(interval*1000) 
+                constantSpeed: 10,
+                color: '#ff270a'
             },
             blendMode: 'lighter',
             polyline: true,
             lineStyle: {
-                width: 1,
+                width: 0,
                 color: '#ff270a',
                 opacity: 0
             },
-            data: res.data[curHour]
+            data: res.data
         }]
     
     }
@@ -110,25 +119,19 @@ $.getJSON("data/taxi_line_hour.json", function(res){
         if(playControl == false){
             playControl = true;
             document.getElementById('playButton').setAttribute("disabled", true);
-            mychart.setOption({
-                series:[{
-                    effect: {
-                        show: true
-                    }
-                }]
-            });
             setTimeout(update, timeout);
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: idx
+            })
         }
     };
     document.getElementById('pauseButton').onclick = function(){
         if(playControl == true){
-            mychart.setOption({
-                series:[{
-                    effect: {
-                        show: false
-                    }
-                }]
-            });
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: idx
+            })
         }
         playControl = false;
         document.getElementById('playButton').removeAttribute("disabled");
