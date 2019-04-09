@@ -1,5 +1,6 @@
 var bus_count, taxi_count, subway_count, truck_count;
 var chartType = 0;
+var curHour = parseInt(curTime/60);
 
 $.ajaxSettings.async = false;
 $.getJSON("data/hour_count.json", function(res){
