@@ -21,6 +21,11 @@ map.on('load', function () {
         'data': 'data/taxi.geojson'
     });
 
+    map.addSource('subway', {
+        'type': 'geojson',
+        'data': 'data/subway.geojson'
+    });
+
     map.addSource('truck', {
         'type': 'geojson',
         'data': 'data/truck.geojson'
@@ -86,8 +91,27 @@ map.on('load', function () {
         }
     });
 
+    map.addLayer({
+        'id': 'subway_circle',
+        'type': 'circle',
+        'source': 'subway',
+        'icon-allow-overlap': true,
+        'paint': {
+            'circle-color': '#43B455',
+            'circle-opacity': 0.4,
+            'circle-radius': [
+                'interpolate',
+                ['linear'],
+                ['get', 'count'],
+                0, 0,
+                300, 30
+            ],
+            'circle-blur': 0
+        }
+    });
+
     //filter by time
-    filterByTime();
+    filterBy(curHour);
 
 });
 
@@ -95,6 +119,7 @@ map.on('load', function () {
 //drag box & box count
 var busVisibale = true;
 var taxiVisibale = true;
+var subwayVisibale = true;
 var truckVisibale = true;
 
 var canvas = map.getCanvasContainer();
@@ -200,27 +225,19 @@ function boxCount() {
      
     // If bbox exists. use this value as the argument for `queryRenderedFeatures`
     if (curbbox) {
-        var busCount = map.queryRenderedFeatures(curbbox, { layers: ['bus_circle'] }).length;
-        var taxiCount = map.queryRenderedFeatures(curbbox, { layers: ['taxi_circle'] }).length;
-        var truckCount = map.queryRenderedFeatures(curbbox, { layers: ['truck_circle'] }).length;
-        var subwayCount = 0;
+        var busCountBox = map.queryRenderedFeatures(curbbox, { layers: ['bus_circle'] }).length;
+        var taxiCountBox = map.queryRenderedFeatures(curbbox, { layers: ['taxi_circle'] }).length;
+        var truckCountBox = map.queryRenderedFeatures(curbbox, { layers: ['truck_circle'] }).length;
 
-        var subwayFeatures = map.queryRenderedFeatures(curbbox, { layers: ['subway_circle'] });
-        for(var i=0; i<subwayFeatures.length; i++){
-            subwayCount += subwayFeatures[i].properties.count;
-        }
-
-        var busRatio, taxiRatio, subwayRatio, truckRatio;
-        var sum = busCount + taxiCount + truckCount + subwayCount;
+        var busRatio, taxiRatio, truckRatio;
+        var sum = busCountBox + taxiCountBox + truckCountBox;
         if(sum != 0){
-            busRatio = (busCount * 100 / sum).toFixed(2);
-            taxiRatio = (taxiCount * 100/ sum).toFixed(2);
-            subwayRatio = (subwayCount * 100/ sum).toFixed(2);
-            truckRatio = (truckCount * 100/ sum).toFixed(2);
+            busRatio = (busCountBox * 100 / sum).toFixed(2);
+            taxiRatio = (taxiCountBox * 100/ sum).toFixed(2);
+            truckRatio = (truckCountBox * 100/ sum).toFixed(2);
         }else{
             busRatio = 0;
             taxiRatio = 0;
-            subwayRatio = 0;
             truckRatio = 0;
         }
 
@@ -228,16 +245,19 @@ function boxCount() {
         var text = '<h6>Statistics</h6>';
 
         if(busVisibale){
-            text += "<span class='bus'>Bus: </span><span>" + busRatio + "%</span><span> (" + busCount + ")</span><br/>";
+            text += "<span class='bus'>Bus: </span><span>" + busRatio + "%</span><span> (" + busCountBox + ")</span><br/>";
         }
         if(taxiVisibale){
-            text += "<span class='taxi'>Taxi: </span><span>" + taxiRatio + "%</span><span> (" + taxiCount + ")</span><br/>";
+            text += "<span class='taxi'>Taxi: </span><span>" + taxiRatio + "%</span><span> (" + taxiCountBox + ")</span><br/>";
+        }
+        if(subwayVisibale){
+            text += "<span class='subway'>Subway: </span><span>" + subwayRatio + "%</span><span> (" + subwayCount + ")</span><br/>";
         }
         if(truckVisibale){
-            text +=  "<span class='truck'>Truck: </span><span>" + truckRatio + "%</span><span> (" + truckCount + ")</span><br/>";
+            text +=  "<span class='truck'>Truck: </span><span>" + truckRatio + "%</span><span> (" + truckCountBox + ")</span><br/>";
         }
     
-        if(busVisibale || taxiVisibale || truckVisibale){
+        if(busVisibale || taxiVisibale || subwayVisibale || truckVisibale){
             boxPopup.setLngLat(startLnglat)
             .setHTML(text)
             .addTo(map);
@@ -252,46 +272,88 @@ map.on('render', function(){
     if(curbbox){
         boxCount();
     }
+    chartUpdate();
 })
+
+
+//Subway popup
+var subwayPopup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false
+});
+
+map.on('mouseenter', 'subway_circle', function(e) {
+
+    map.getCanvas().style.cursor = 'pointer';
+     
+    var coordinates = e.features[0].geometry.coordinates.slice();
+    var description = e.features[0].properties.station;
+    var count = 0;
+    for(var i=0; i<e.features.length; i++){
+        count += e.features[i].properties.count;
+    }
+     
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+     
+    subwayPopup.setLngLat(coordinates)
+    .setHTML(
+        "<span class='subway'>" + description + ": </span>" + 
+        "<span>" + count + "</span>"
+    )
+    .addTo(map);
+});
+
+map.on('mouseleave', 'subway_circle', function() {
+    map.getCanvas().style.cursor = '';
+    subwayPopup.remove();
+});
+
 
 
 
 //play control
+<<<<<<< HEAD
 var INTERVAL = [200, 150, 100, 80, 50, 20, 10];
-var curTime = 10;
+var curTime = document.getElementById('timeSlider').value;
 var step = 1;
-var interval = INTERVAL[4];
+var speed = document.getElementById('speedSlider').value;
+var interval = INTERVAL[speed];
+=======
+var speed = [3000, 2500, 2000, 1500, 1000, 600, 300];
+var curHour = 10;
+var interval = speed[4];
+>>>>>>> parent of c6af6d6... Update
 var playControl = false;
 
-function filterByTime() {
+function filterBy(h) {
     
-    var filters = ['==', 'hour', parseInt(curTime/60)];
+    var filters;
 
-    var timeText = '';
-    if(curTime/60 < 10){
-        timeText = timeText + '0' + parseInt(curTime/60) + ':';
+    if(h==23){
+        filters = ['in', 'hour', 23, 0];
+        document.getElementById('time').textContent = "23:00-0:00";
     }else{
-        timeText = timeText + parseInt(curTime/60) + ':';
+        filters = ['in', 'hour', h, h+1];
+        document.getElementById('time').textContent = String(h) + ":00-" + String(h+1) + ":00";
     }
-    if(curTime%60 < 10){
-        timeText = timeText + '0' + parseInt(curTime%60);
-    }else{
-        timeText = timeText + parseInt(curTime%60);
-    }
-    document.getElementById('time').textContent = timeText;
-
+    
     map.setFilter('bus_circle', filters);
     map.setFilter('taxi_circle', filters);
     map.setFilter('truck_circle', filters);
+
+
+    filters = ['in', 'hour', h];
+    map.setFilter('subway_circle', filters);
 
 }
 
 function update() {
     if(playControl == true){
-        curTime = (curTime + step) % 1440;
-        curHour = parseInt(curTime/60);
-        document.getElementById('timeSlider').value = curTime;
-        filterByTime();
+        curHour = (curHour + 1) % 24;
+        slider.value = curHour;
+        filterBy(curHour);
         chartUpdate();
         if (curbbox){
             boxCount();
@@ -300,9 +362,9 @@ function update() {
     }
 }
 
-document.getElementById('timeSlider').addEventListener('change', function (e) {
-    curTime = parseInt(e.target.value)
-    filterByTime();
+document.getElementById('slider').addEventListener('change', function (e) {
+    curHour = parseInt(e.target.value)
+    filterBy(curHour);
     chartUpdate();
 });
 
@@ -318,10 +380,11 @@ document.getElementById('pauseButton').onclick = function(){
     document.getElementById('playButton').removeAttribute("disabled");
 };
 
-document.getElementById('speedSlider').addEventListener('input', function (e) {
+document.getElementById('speed').addEventListener('input', function (e) {
     var num = parseInt(e.target.value, 10);
-    interval = INTERVAL[num];
+    interval = speed[num - 1];
 });
+
 
 
 
@@ -333,6 +396,16 @@ document.getElementById('busControlInput').addEventListener('change', function()
     }else{
         map.setLayoutProperty('bus_circle', 'visibility', 'none');
         busVisibale = false;
+    }
+})
+
+document.getElementById('subwayControlInput').addEventListener('change', function(){
+    if($("#subwayControlInput").is(":checked")){
+        map.setLayoutProperty('subway_circle', 'visibility', 'visible');
+        subwayVisibale = true;
+    }else{
+        map.setLayoutProperty('subway_circle', 'visibility', 'none');
+        subwayVisibale = false;
     }
 })
 
