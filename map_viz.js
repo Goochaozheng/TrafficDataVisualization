@@ -18,7 +18,7 @@ map.on('load', function () {
 
     map.addSource('taxi', {
         'type': 'geojson',
-        'data': 'data/taxi.geojson'
+        'data': 'data/taxi_sample_2m_timestamp.geojson'
     });
 
     map.addSource('truck', {
@@ -26,25 +26,25 @@ map.on('load', function () {
         'data': 'data/truck.geojson'
     });
 
-    map.addLayer({
-        'id': 'truck_circle',
-        'type': 'circle',
-        'source': 'truck',
-        'icon-allow-overlap': true,
-        'paint': {
-            'circle-color': '#E6A3E6',
-            'circle-opacity': 0.75,
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                10, 1,
-                13, 2.5,
-                15, 5
-            ],
-            'circle-blur': 0
-        }
-    });
+    // map.addLayer({
+    //     'id': 'truck_circle',
+    //     'type': 'circle',
+    //     'source': 'truck',
+    //     'icon-allow-overlap': true,
+    //     'paint': {
+    //         'circle-color': '#E6A3E6',
+    //         'circle-opacity': 0.75,
+    //         'circle-radius': [
+    //             'interpolate',
+    //             ['linear'],
+    //             ['zoom'],
+    //             10, 1,
+    //             13, 2.5,
+    //             15, 5
+    //         ],
+    //         'circle-blur': 0
+    //     }
+    // });
 
     map.addLayer({
         'id': 'taxi_circle',
@@ -66,25 +66,25 @@ map.on('load', function () {
         }
     });
 
-    map.addLayer({
-        'id': 'bus_circle',
-        'type': 'circle',
-        'source': 'bus',
-        'icon-allow-overlap': true,
-        'paint': {
-            'circle-color': '#ef834e',
-            'circle-opacity': 0.75,
-            'circle-radius': [
-                'interpolate',
-                ['linear'],
-                ['zoom'],
-                10, 1,
-                13, 2.5,
-                15, 5
-            ],
-            'circle-blur': 0
-        }
-    });
+    // map.addLayer({
+    //     'id': 'bus_circle',
+    //     'type': 'circle',
+    //     'source': 'bus',
+    //     'icon-allow-overlap': true,
+    //     'paint': {
+    //         'circle-color': '#ef834e',
+    //         'circle-opacity': 0.75,
+    //         'circle-radius': [
+    //             'interpolate',
+    //             ['linear'],
+    //             ['zoom'],
+    //             10, 1,
+    //             13, 2.5,
+    //             15, 5
+    //         ],
+    //         'circle-blur': 0
+    //     }
+    // });
 
     //filter by time
     filterByTime();
@@ -200,27 +200,24 @@ function boxCount() {
      
     // If bbox exists. use this value as the argument for `queryRenderedFeatures`
     if (curbbox) {
-        var busCount = map.queryRenderedFeatures(curbbox, { layers: ['bus_circle'] }).length;
+        // var busCount = map.queryRenderedFeatures(curbbox, { layers: ['bus_circle'] }).length;
         var taxiCount = map.queryRenderedFeatures(curbbox, { layers: ['taxi_circle'] }).length;
-        var truckCount = map.queryRenderedFeatures(curbbox, { layers: ['truck_circle'] }).length;
-        var subwayCount = 0;
+        // var truckCount = map.queryRenderedFeatures(curbbox, { layers: ['truck_circle'] }).length;
 
         var subwayFeatures = map.queryRenderedFeatures(curbbox, { layers: ['subway_circle'] });
         for(var i=0; i<subwayFeatures.length; i++){
             subwayCount += subwayFeatures[i].properties.count;
         }
 
-        var busRatio, taxiRatio, subwayRatio, truckRatio;
+        var busRatio, taxiRatio, truckRatio;
         var sum = busCount + taxiCount + truckCount + subwayCount;
         if(sum != 0){
             busRatio = (busCount * 100 / sum).toFixed(2);
             taxiRatio = (taxiCount * 100/ sum).toFixed(2);
-            subwayRatio = (subwayCount * 100/ sum).toFixed(2);
             truckRatio = (truckCount * 100/ sum).toFixed(2);
         }else{
             busRatio = 0;
             taxiRatio = 0;
-            subwayRatio = 0;
             truckRatio = 0;
         }
 
@@ -265,7 +262,7 @@ var playControl = false;
 
 function filterByTime() {
     
-    var filters = ['==', 'hour', parseInt(curTime/60)];
+    var filters = ['==', 'timestamp', curTime];
 
     var timeText = '';
     if(curTime/60 < 10){
@@ -280,9 +277,9 @@ function filterByTime() {
     }
     document.getElementById('time').textContent = timeText;
 
-    map.setFilter('bus_circle', filters);
+    // map.setFilter('bus_circle', filters);
     map.setFilter('taxi_circle', filters);
-    map.setFilter('truck_circle', filters);
+    // map.setFilter('truck_circle', filters);
 
 }
 
