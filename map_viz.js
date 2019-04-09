@@ -3,9 +3,10 @@ const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
     center: [114.0579, 22.5431],
-    zoom: 13,
+    zoom: 10,
     maxZoom: 15,
     minZoom: 10,
+
 });
 
 map.on('load', function () {
