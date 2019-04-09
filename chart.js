@@ -1,10 +1,26 @@
-var curHour //= parseInt(curTime/60);
-var busCount //= map.querySourceFeatures('bus', { filter: ['==', 'hour', curHour] }).length;
-var taxiCount //= map.querySourceFeatures('taxi', { filter: ['==', 'hour', curHour] }).length;
-var truckCount //= map.querySourceFeatures('truck', { filter: ['==', 'hour', curHour] }).length;
+var bus_count, taxi_count, subway_count, truck_count;
 var chartType = 0;
+var curHour = parseInt(curTime/60);
 
-//alert(busCount + ' ' + taxiCount + ' ' + truckCount);
+$.ajaxSettings.async = false;
+$.getJSON("data/hour_count.json", function(res){
+
+    $.each(res.data, function(i, field){
+        if(field.type == 'bus'){
+            bus_count = field.count;
+        }
+        if(field.type == 'taxi'){
+            taxi_count = field.count;
+        }
+        if(field.type == 'subway'){
+            subway_count = field.count;
+        }
+        if(field.type == 'truck'){
+            truck_count = field.count;
+        }
+    });
+
+})
 
 var chart = echarts.init(document.getElementById("chart"));
 
@@ -19,7 +35,7 @@ var option = {
         trigger: 'item'
     },
     xAxis:{
-        data: ['Bus', 'Taxi', 'Truck'],
+        data: ['Bus', 'Taxi', 'Subway', 'Truck'],
         show: false
     },
     yAxis:{
@@ -28,14 +44,15 @@ var option = {
     series:[{
         type: 'bar',
         data: [
-            busCount,
-            taxiCount,
-            truckCount
+            bus_count[curHour],
+            taxi_count[curHour],
+            subway_count[curHour],
+            truck_count[curHour]
         ],
         itemStyle:{
             normal:{
                 color: function(params){
-                    var colors = ['#ef834e', '#007bff', '#E6A3E6'];
+                    var colors = ['#ef834e', '#007bff', '#43B455', '#E6A3E6'];
                     return colors[params.dataIndex]
                 }                
             }
@@ -51,10 +68,6 @@ window.onresize = function(){
 
 function chartUpdate() {
     
-    curHour = parseInt(curTime/60);
-    busCount = map.querySourceFeatures('bus', { filter: ['==', 'hour', curHour] }).length;
-    taxiCount = map.querySourceFeatures('taxi', { filter: ['==', 'hour', curHour] }).length;
-    truckCount = map.querySourceFeatures('truck', { filter: ['==', 'hour', curHour] }).length;
 
     //Update as bar chart
     if(chartType == 0){
@@ -69,7 +82,7 @@ function chartUpdate() {
                 trigger: 'item'
             },
             xAxis:{
-                data: ['Bus', 'Taxi', 'Truck'],
+                data: ['Bus', 'Taxi', 'Subway', 'Truck'],
                 show: false
             },
             yAxis:{
@@ -78,14 +91,15 @@ function chartUpdate() {
             series:[{
                 type: 'bar',
                 data: [
-                    busCount,
-                    taxiCount,
-                    truckCount
+                    bus_count[curHour],
+                    taxi_count[curHour],
+                    subway_count[curHour],
+                    truck_count[curHour]
                 ],
                 itemStyle:{
                     normal:{
                         color: function(params){
-                            var colors = ['#ef834e', '#007bff', '#E6A3E6'];
+                            var colors = ['#ef834e', '#007bff', '#43B455', '#E6A3E6'];
                             return colors[params.dataIndex]
                         }                
                     }
@@ -100,6 +114,7 @@ function chartUpdate() {
 
         var h0, h1, h2, h3, h4;
         h0 = (curHour - 1 + 24) % 24;
+        h1 = curHour;
         h2 = (curHour+1) % 24;
         h3 = (curHour+2) % 24;
         h4 = (curHour+3) % 24;
@@ -129,35 +144,22 @@ function chartUpdate() {
             series:[{
                 name: 'Bus',
                 type: 'line',
-                data:  [
-                    map.querySourceFeatures('bus', { filter: ['==', 'hour', h0] }).length,
-                    busCount,
-                    map.querySourceFeatures('bus', { filter: ['==', 'hour', h2] }).length,
-                    map.querySourceFeatures('bus', { filter: ['==', 'hour', h3] }).length,
-                    map.querySourceFeatures('bus', { filter: ['==', 'hour', h4] }).length
-                ],
+                data:  [bus_count[h0], bus_count[h1], bus_count[h2], bus_count[h3]],
                 color: '#ef834e'
             },{
                 name: 'Taxi',
                 type: 'line',
-                data:  [
-                    map.querySourceFeatures('taxi', { filter: ['==', 'hour', h0] }).length,
-                    taxiCount,
-                    map.querySourceFeatures('taxi', { filter: ['==', 'hour', h2] }).length,
-                    map.querySourceFeatures('taxi', { filter: ['==', 'hour', h3] }).length,
-                    map.querySourceFeatures('taxi', { filter: ['==', 'hour', h4] }).length
-                ],
+                data:  [taxi_count[h0], taxi_count[h1], taxi_count[h2], taxi_count[h3]],
                 color: '#007bff'
+            },{
+                name: 'Subway',
+                type: 'line',
+                data:  [subway_count[h0], subway_count[h1], subway_count[h2], subway_count[h3]],
+                color: '#43B455'
             },{
                 name: 'Truck',
                 type: 'line',
-                data:  [
-                    map.querySourceFeatures('truck', { filter: ['==', 'hour', h0] }).length,
-                    truckCount,
-                    map.querySourceFeatures('truck', { filter: ['==', 'hour', h2] }).length,
-                    map.querySourceFeatures('truck', { filter: ['==', 'hour', h3] }).length,
-                    map.querySourceFeatures('truck', { filter: ['==', 'hour', h4] }).length
-                ],
+                data:  [truck_count[h0], truck_count[h1], truck_count[h2], truck_count[h3]],
                 color: '#E6A3E6'
             }]
 
@@ -180,14 +182,15 @@ function chartUpdate() {
             series:[{
                 type: 'pie',
                 data: [
-                    {value: busCount, name:"Bus"},
-                    {value: taxiCount, name:"Taxi"},
-                    {value: truckCount, name: "Truck"}
+                    {value: bus_count[curHour], name:"Bus"},
+                    {value: taxi_count[curHour], name:"Taxi"},
+                    {value: subway_count[curHour], name: "Subway"},
+                    {value: truck_count[curHour], name: "Truck"}
                 ],
                 itemStyle:{
                     normal:{
                         color: function(params){
-                            var colors = ['#ef834e', '#007bff', '#E6A3E6'];
+                            var colors = ['#ef834e', '#007bff', '#43B455', '#E6A3E6'];
                             return colors[params.dataIndex]
                         },
                         labelLine:{
