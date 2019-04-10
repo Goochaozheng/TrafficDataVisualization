@@ -1,6 +1,6 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0NHF4d2U4bWQya2cifQ.gMTSB1UQhBLpAG9eRdSDdg';
 
-$.getJSON("data/taxi_line_hour_200000.json", function(res){
+$.getJSON("data/taxi_line_hour_2.json", function(res){
 
     var mychart = echarts.init(document.getElementById('map'));
     //play control
@@ -13,26 +13,37 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
 
     var playControl = false;
 
+    console.log(res.data[curHour])
 
     var option = {
 
-        progressive: 2,
-        mapbox:{
-            style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
+        // mapbox:{
+        //     style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
+        //     center: [114.0579, 22.5431],
+        //     zoom: 10,
+        //     maxZoom: 10.5,
+        //     minZoom: 9.5,
+        // },
+        bmap:{
             center: [114.0579, 22.5431],
-            zoom: 10,
-            maxZoom: 10.5,
-            minZoom: 9.5,
+            zoom: 15,
+            roam: true,
+            mapStyle:{
+                style: 'dark'
+            }
         },
         series:[{
-            type: 'lines3D',
-            coordinateSystem: 'mapbox',
+            type: 'lines',
+            coordinateSystem: 'bmap',
+            data: res.data[curHour],
+            animation: false,
             effect: {
                 show: true,
-                trailWidth: 1.5,
-                trailLength: 0.3,
-                trailOpacity: 0.5,
-                constantSpeed: interval * 2
+                trailWidth: 1,
+                trailLength: 0.5,
+                trailOpacity: 0.2,
+                constantSpeed: interval * 2,
+                loop: false
                 //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
@@ -40,10 +51,9 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
             large: true,
             lineStyle: {
                 width: 0.8,
-                color: '#007bff',
-                opacity: 0.3
+                color: '#ca2222',
+                opacity: 0.1
             },
-            data: res.data[curHour]
         }]
     
     }
@@ -51,10 +61,10 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
 
     mychart.setOption(option);
 
-    mychart.dispatchAction({
-        type: 'lines3DToggleEffect',
-        seriesIndex: 0
-    })
+    // mychart.dispatchAction({
+    //     type: 'lines3DToggleEffect',
+    //     seriesIndex: 0
+    // })
 
     window.onresize = function(){
         mychart.resize();
@@ -126,19 +136,19 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
         if(playControl == false){
             playControl = true;
             document.getElementById('playButton').setAttribute("disabled", true);
-            mychart.dispatchAction({
-                type: 'lines3DToggleEffect',
-                seriesIndex: 0
-            })
+            // mychart.dispatchAction({
+            //     type: 'lines3DToggleEffect',
+            //     seriesIndex: 0
+            // })
             setTimeout(update, timeout);
         }
     };
     document.getElementById('pauseButton').onclick = function(){
         if(playControl == true){
-            mychart.dispatchAction({
-                type: 'lines3DToggleEffect',
-                seriesIndex: 0
-            })
+            // mychart.dispatchAction({
+            //     type: 'lines3DToggleEffect',
+            //     seriesIndex: 0
+            // })
         }
         playControl = false;
         document.getElementById('playButton').removeAttribute("disabled");
@@ -147,14 +157,13 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
     document.getElementById('speedSlider').addEventListener('input', function (e) {
         var num = parseInt(e.target.value, 10);
         interval = INTERVAL[num];
-        var newOption = {
+        mychart.setOption({
             series:[{
                 effect: {
                     constantSpeed: interval * 2
                 },
             }]
-        };
-        mychart.setOption(newOption);
+        });
     });
 
 })
