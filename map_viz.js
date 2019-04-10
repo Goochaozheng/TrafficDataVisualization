@@ -40,7 +40,7 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
             large: true,
             lineStyle: {
                 width: 0.8,
-                color: '#007bff',
+                color: '#6b0000',
                 opacity: 0.3
             },
             data: res.data[curHour]
