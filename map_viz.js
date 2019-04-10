@@ -4,7 +4,7 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
 
     var mychart = echarts.init(document.getElementById('map'));
     //play control
-    var INTERVAL = [30, 25, 20, 15, 10, 5, 1];
+    var INTERVAL = [20, 16, 12, 8, 4, 2, 1];
     var interval = INTERVAL[4];
     var timeout = 200;
     var curTime = document.getElementById('timeSlider').value;
@@ -29,10 +29,10 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
             coordinateSystem: 'mapbox',
             effect: {
                 show: true,
-                trailWidth: 1.5,
+                trailWidth: 2,
                 trailLength: 0.3,
                 trailOpacity: 0.5,
-                constantSpeed: interval * 2
+                constantSpeed: interval * 3,
                 //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
@@ -41,7 +41,7 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
             lineStyle: {
                 width: 0.8,
                 color: '#6b0000',
-                opacity: 0.3
+                opacity: 0.2
             },
             data: res.data[curHour]
         }]
@@ -85,7 +85,7 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
             var newOption = {
                 series:[{
                     effect: {
-                        constantSpeed: interval * 2
+                        constantSpeed: interval * 3
                     },
                     data: res.data[curHour]
                 }]
@@ -150,7 +150,7 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
         var newOption = {
             series:[{
                 effect: {
-                    constantSpeed: interval * 2
+                    constantSpeed: interval * 3
                 },
             }]
         };
