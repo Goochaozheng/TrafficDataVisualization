@@ -29,17 +29,28 @@ $.getJSON("data/taxi_line_hour.json", function(res){
             effect: {
                 show: true,
                 trailWidth: 1.5,
-                trailLength: 0.8,
+                trailLength: 0.3,
                 trailOpacity: 0.5,
-                constantSpeed: 30
+                constantSpeed: 50
                 //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
             polyline: true,
             lineStyle: {
-                width: 1,
-                color: '#ff270a',
+                width: 0.5,
+                color: '#007bff',
                 opacity: 0
+            },
+            data: res.data[curHour]
+        },{
+            type: 'lines3D',
+            coordinateSystem: 'mapbox',
+            blendMode: 'lighter',
+            polyline: true,
+            lineStyle: {
+                width: 0.8,
+                color: '#007bff',
+                opacity: 0.3
             },
             data: res.data[curHour]
         }]
@@ -48,10 +59,10 @@ $.getJSON("data/taxi_line_hour.json", function(res){
 
 
     mychart.setOption(option);
-    mychart.dispatchAction({
-        type: 'lines3DToggleEffect',
-        seriesIndex: 0
-    })
+    // mychart.dispatchAction({
+    //     type: 'lines3DToggleEffect',
+    //     seriesIndex: 0
+    // })
     window.onresize = function(){
         mychart.resize();
     }
