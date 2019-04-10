@@ -1,6 +1,6 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0NHF4d2U4bWQya2cifQ.gMTSB1UQhBLpAG9eRdSDdg';
 
-$.getJSON("data/taxi_line_hour_200000.json", function(res){
+$.getJSON("data/taxi_line.json", function(res){
 
     var mychart = echarts.init(document.getElementById('map'));
     //play control
@@ -29,10 +29,11 @@ $.getJSON("data/taxi_line_hour_200000.json", function(res){
             coordinateSystem: 'mapbox',
             effect: {
                 show: true,
-                trailWidth: 2,
-                trailLength: 0.3,
+                trailWidth: 1.5,
+                trailLength: 0.8,
                 trailOpacity: 0.5,
                 constantSpeed: interval * 3,
+                trailColor: '#911010'
                 //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
