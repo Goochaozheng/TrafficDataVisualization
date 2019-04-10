@@ -27,11 +27,12 @@ $.getJSON("data/taxi_line_hour.json", function(res){
             type: 'lines3D',
             coordinateSystem: 'mapbox',
             effect: {
-                show: false,
+                show: true,
                 trailWidth: 1.5,
                 trailLength: 0.8,
                 trailOpacity: 0.5,
-                period: (60*timeout)/(interval*1000) 
+                constantSpeed: 30
+                //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
             polyline: true,
@@ -47,7 +48,10 @@ $.getJSON("data/taxi_line_hour.json", function(res){
 
 
     mychart.setOption(option);
-
+    mychart.dispatchAction({
+        type: 'lines3DToggleEffect',
+        seriesIndex: 0
+    })
     window.onresize = function(){
         mychart.resize();
     }
@@ -110,25 +114,19 @@ $.getJSON("data/taxi_line_hour.json", function(res){
         if(playControl == false){
             playControl = true;
             document.getElementById('playButton').setAttribute("disabled", true);
-            mychart.setOption({
-                series:[{
-                    effect: {
-                        show: true
-                    }
-                }]
-            });
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
             setTimeout(update, timeout);
         }
     };
     document.getElementById('pauseButton').onclick = function(){
         if(playControl == true){
-            mychart.setOption({
-                series:[{
-                    effect: {
-                        show: false
-                    }
-                }]
-            });
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
         }
         playControl = false;
         document.getElementById('playButton').removeAttribute("disabled");
