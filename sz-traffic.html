@@ -10,6 +10,8 @@
     <script src="lib/echarts.js"></script>
     <script src="lib/echarts-gl.js"></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+    <script src='data/bus_line.js'></script> 
+    <script src='data/taxi_line.js'></script> 
     
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -47,7 +49,7 @@
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;" >
-                            <input type="checkbox" class="custom-control-input"  id="busControlInput" checked>
+                            <input type="checkbox" class="custom-control-input"  id="busControlInput">
                             <label class="custom-control-label" style="top:-3px;"  for="busControlInput" id="busControlLabel"></label>
                         </div> 
                     </span>
@@ -71,7 +73,7 @@
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;">
-                            <input type="checkbox" class="custom-control-input"  id="subwayControlInput" checked>
+                            <input type="checkbox" class="custom-control-input"  id="subwayControlInput">
                             <label class="custom-control-label" style="top:-3px;"  for="subwayControlInput" id="subwayControlLabel"></label>
                         </div> 
                     </span>
