@@ -1,6 +1,6 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0NHF4d2U4bWQya2cifQ.gMTSB1UQhBLpAG9eRdSDdg';
 
-$.getJSON("data/taxi_line_hour.json", function(res){
+$.getJSON("data/taxi_line_hour_200000.json", function(res){
 
     var mychart = echarts.init(document.getElementById('map'));
     //play control
@@ -16,6 +16,7 @@ $.getJSON("data/taxi_line_hour.json", function(res){
 
     var option = {
 
+        progressive: 2,
         mapbox:{
             style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
             center: [114.0579, 22.5431],
@@ -31,22 +32,12 @@ $.getJSON("data/taxi_line_hour.json", function(res){
                 trailWidth: 1.5,
                 trailLength: 0.3,
                 trailOpacity: 0.5,
-                constantSpeed: 50
+                constantSpeed: interval * 2
                 //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
             polyline: true,
-            lineStyle: {
-                width: 0.5,
-                color: '#007bff',
-                opacity: 0
-            },
-            data: res.data[curHour]
-        },{
-            type: 'lines3D',
-            coordinateSystem: 'mapbox',
-            blendMode: 'lighter',
-            polyline: true,
+            large: true,
             lineStyle: {
                 width: 0.8,
                 color: '#007bff',
@@ -59,10 +50,12 @@ $.getJSON("data/taxi_line_hour.json", function(res){
 
 
     mychart.setOption(option);
-    // mychart.dispatchAction({
-    //     type: 'lines3DToggleEffect',
-    //     seriesIndex: 0
-    // })
+
+    mychart.dispatchAction({
+        type: 'lines3DToggleEffect',
+        seriesIndex: 0
+    })
+
     window.onresize = function(){
         mychart.resize();
     }
@@ -92,13 +85,21 @@ $.getJSON("data/taxi_line_hour.json", function(res){
             var newOption = {
                 series:[{
                     effect: {
-                        period: (60*timeout)/(interval*1000) 
+                        constantSpeed: interval * 2
                     },
-                    data: res.data[curHour].concat(res.data[preHour])
+                    data: res.data[curHour]
                 }]
             };
             mychart.setOption(newOption);
         }
+
+        if(playControl == false){
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
+        }
+
     }
 
     function update() {
@@ -149,7 +150,7 @@ $.getJSON("data/taxi_line_hour.json", function(res){
         var newOption = {
             series:[{
                 effect: {
-                    period: (60*timeout)/(interval*1000) 
+                    constantSpeed: interval * 2
                 },
             }]
         };
