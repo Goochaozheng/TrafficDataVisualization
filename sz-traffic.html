@@ -5,11 +5,15 @@
     <meta charset='utf-8' />
     <title>Shenzhen Traffic Information</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
     <script src='lib/jquery-3.3.1.js'></script>    
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="lib/echarts.min.js"></script>
-
+    <script src="lib/echarts.js"></script>
+    <script src="lib/echarts-gl.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.js'></script>
+    <script src='data/bus_line.js'></script> 
+    <script src='data/taxi_line.js'></script> 
+    <script src='data/subway_line_2.js'></script>
+    
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css' rel='stylesheet' />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="customStyle.css">
@@ -29,11 +33,11 @@
                 <button type="button" class='btn ctrBtn' id="pauseButton" style="display:inline">Pause</button>
 
                 <div class='desc'>Time</div>
-                <h2 id='time'>00:00</h2>
-                <input id='timeSlider' type='range' min='0' max='1439' step='1' value='0' />
+                <h2 class='time' id='time'>00:00</h2>
+                <input id='timeSlider' type='range' min='0' max='1439' step='1' value='0'/>
 
                 <div class='desc' style='margin-bottom: 10px; margin-top: 20px; width: 25%;'>Speed</div>
-                <input id='speedSlider' type='range' min='0' max='6' step='1' value='4' />
+                <input id='speedSlider' type='range' min='0' max='6' step='1' value='3' />
 
             </div>
         </div>
@@ -46,7 +50,7 @@
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;" >
-                            <input type="checkbox" class="custom-control-input"  id="busControlInput" checked>
+                            <input type="checkbox" class="custom-control-input"  id="busControlInput">
                             <label class="custom-control-label" style="top:-3px;"  for="busControlInput" id="busControlLabel"></label>
                         </div> 
                     </span>
@@ -66,14 +70,15 @@
                 </li>
                 <li class="list-group-item">
 
-                    <span>Truck</span>
+                    <span>Subway</span>
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;">
-                            <input type="checkbox" class="custom-control-input"  id="truckControlInput" checked>
-                            <label class="custom-control-label" style="top:-3px;"  for="truckControlInput" id="truckControlLabel"></label>
+                            <input type="checkbox" class="custom-control-input"  id="subwayControlInput">
+                            <label class="custom-control-label" style="top:-3px;"  for="subwayControlInput" id="subwayControlLabel"></label>
                         </div> 
-                    </span>                   
+                    </span>
+
                 </li>
             </ul>
         </div>       
@@ -98,7 +103,7 @@
     </div>
 
     <script src="map_viz.js"></script>
-    <script src="chart.js"></script>
+    <!-- <script src="chart.js"></script> -->
 
 </body>
 

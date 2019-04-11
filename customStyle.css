@@ -105,20 +105,20 @@ input[type=range]::-webkit-slider-thumb {
 
 #busControlInput:checked~#busControlLabel::before {
     color: #fff;
-    border-color: #ef834e;
-    background-color: #ef834e;
+    border-color: #b63333;
+    background-color: #b63333;
 }
 
 #subwayControlInput:checked~#subwayControlLabel::before {
     color: #fff;
-    border-color: rgb(67, 180, 85);
-    background-color: rgb(67, 180, 85);
+    border-color: #b63333;
+    background-color: #b63333;
 }
 
-#truckControlInput:checked~#truckControlLabel::before {
+#taxiControlInput:checked~#taxiControlLabel::before {
     color: #fff;
-    border-color: rgb(230, 163, 230);
-    background-color: rgb(230, 163, 230);
+    border-color: #b63333;
+    background-color: #b63333;
 }
 
 #time{
@@ -127,39 +127,6 @@ input[type=range]::-webkit-slider-thumb {
     height: 100%;
     line-height: 50px;
 }
-
-.subway{
-    font-family: 'Microsoft YaHei', sans-serif;
-    font-size: 15px;
-    line-height: 15px;
-    margin: 0, 0, 0, 0;
-    color: #43B455
-}
-
-.bus{
-    font-family: 'Microsoft YaHei', sans-serif;
-    font-size: 15px;
-    line-height: 15px;
-    margin: 0, 0, 0, 0;
-    color: #ef834e
-}
-
-.taxi{
-    font-family: 'Microsoft YaHei', sans-serif;
-    font-size: 15px;
-    line-height: 15px;
-    margin: 0, 0, 0, 0;
-    color: #007bff
-}
-
-.truck{
-    font-family: 'Microsoft YaHei', sans-serif;
-    font-size: 15px;
-    line-height: 15px;
-    margin: 0, 0, 0, 0;
-    color: #E6A3E6
-}
-
 
 
 .mapboxgl-popup-content{
