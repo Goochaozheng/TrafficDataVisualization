@@ -1,106 +1,187 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0NHF4d2U4bWQya2cifQ.gMTSB1UQhBLpAG9eRdSDdg';
 
-var mychart = echarts.init(document.getElementById('map'));
-//play control
-var INTERVAL = [20, 16, 12, 8, 4, 2, 1];
-var interval = INTERVAL[4];
-var timeout = 200;
-var curTime = document.getElementById('timeSlider').value;
-var curHour = parseInt(curTime/60);
-var preHour = curHour;
-
-var playControl = false; //true->is playing, false->pause
-var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
-var layerChange = false; //true->layer switch
-
-function getData(){
-    if(curLayer == 0) return bus_data[curHour];
-    if(curLayer == 1) return taxi_data[curHour];
-    if(curLayer == 2) return subway_data[curHour];
-    if(curLayer == -1) return {};
-}
-
-var option = {
-
-    progressive: 2,
-    mapbox:{
-        style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
-        center: [114.0579, 22.5431],
-        zoom: 10,
-        maxZoom: 10.5,
-        minZoom: 9.5,
-    },
-    series:[{
-        type: 'lines3D',
-        coordinateSystem: 'mapbox',
-        effect: {
-            show: true,
-            trailWidth: 1.5,
-            trailLength: 0.8,
-            trailOpacity: 0.5,
-            constantSpeed: interval * 3,
-            trailColor: '#911010'
-            //period: (60*timeout)/(interval*1000) 
-        },
-        blendMode: 'lighter',
-        polyline: true,
-        large: true,
-        lineStyle: {
-            width: 0.8,
-            color: '#6b0000',
-            opacity: 0.2
-        },
-        data: getData()
-    }]
-
-}
-
-
-mychart.setOption(option);
-
-mychart.dispatchAction({
-    type: 'lines3DToggleEffect',
-    seriesIndex: 0
-})
-
-window.onresize = function(){
-    mychart.resize();
-}
-
-
-function redraw(){
-
-    console.log(getData()); 
+$.getJSON('data/Shenzhen.json', function(sz_json){
     
-    //reset series data
-    var newOption = {
-        series:[{
-            effect: {
-                constantSpeed: interval * 3
-            },
-            data: getData()
-        }]
-    };
-    mychart.setOption(newOption);
+    echarts.registerMap('sz', sz_json);
+    var mychart = echarts.init(document.getElementById('map'));
 
-    //control line effect
-    if(playControl == false){
-        mychart.dispatchAction({
-            type: 'lines3DToggleEffect',
-            seriesIndex: 0
-        })
+    //play control
+    var INTERVAL = [20, 16, 12, 8, 4, 2, 1];
+    var interval = INTERVAL[4];
+    var timeout = 200;
+    var curTime = document.getElementById('timeSlider').value;
+    var curHour = parseInt(curTime/60);
+    var preHour = curHour;
+    
+    var playControl = false; //true->is playing, false->pause
+    var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
+    var layerChange = false; //true->layer switch
+    
+    function getData(){
+        if(curLayer == 0) return bus_data[curHour];
+        if(curLayer == 1) return taxi_data[curHour];
+        if(curLayer == 2) return subway_data[curHour];
+        if(curLayer == -1) return {};
     }
+    
+    var option = {
+    
+        progressive: 2,
+        // mapbox:{
+        //     style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
+        //     center: [114.0579, 22.5431],
+        //     zoom: 10,
+        //     maxZoom: 10.5,
+        //     minZoom: 9.5,
+        // },
+        geo3D:{
+            map: 'sz',
+            environment: '#3a3a3a',
+            regionHeight: 0,
+            itemStyle:{
+                color: '#303030',
+                borderWidth: 1,
+                borderColor: '#424242'
+            },
+            shading: 'lambert',
+            viewControl:{
+                panMouseButton: 'left',
+                rotateMouseButton: 'right',
+                rotateSensitivity: 0.5,
+                panSensitivity: 0.5
+            },
+            emphasis:{
+                label:{
+                    show: false
+                },
+                itemStyle:{
+                    color: '#303030',
+                    opacity: 0.99
+                }
+            }
 
-}
+        },
+        series:[
+            {
+            type: 'lines3D',
+            coordinateSystem: 'geo3D',
+            effect: {
+                show: true,
+                trailWidth: 1.5,
+                trailLength: 0.8,
+                trailOpacity: 0.8,
+                constantSpeed: interval * 4,
+                trailColor: '#911010'
+                //period: (60*timeout)/(interval*1000) 
+            },
+            blendMode: 'lighter',
+            polyline: true,
+            large: true,
+            lineStyle: {
+                width: 0.8,
+                color: '#6b0000',
+                opacity: 0.5
+            },
+            zLevel: 0,
+            data: getData()
+        }
+    ]
+    
+    }
+    
+    
+    mychart.setOption(option);
+    
+    mychart.dispatchAction({
+        type: 'lines3DToggleEffect',
+        seriesIndex: 0
+    })
+    
+    window.onresize = function(){
+        mychart.resize();
+            
+        //control line effect
+        if(playControl == false){
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
+        }
+    }
+    
+    
+    function redraw(){
+        
+        var n_trailLength, n_lineOpacity;
+        if(curLayer == 2){
+            n_trailLength = 0.2;
+            n_lineOpacity = 0.1;
+        }else{
+            n_trailLength = 0.8;
+            n_lineOpacity = 0.5;
+        }
 
-function update() {
-    if(playControl == true){
+        //reset series data
+        var newOption = {
+            series:[{
+                effect: {
+                    constantSpeed: interval * 4,
+                    trailLength: n_trailLength
+                },
+                lineStyle:{
+                    opacity: n_lineOpacity
+                },
+                data: getData()
+            }]
+        };
+        mychart.setOption(newOption);
+        
 
-        //Update current time & current hour
-        preHour = curHour;
-        curTime = (curTime + interval) % 1440;
+        //control line effect
+        if(playControl == false){
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
+        }
+    
+    }
+    
+    function next() {
+        if(playControl == true){
+    
+            //Update current time & current hour
+            preHour = curHour;
+            curTime = (curTime + interval) % 1440;
+            curHour = parseInt(curTime/60);
+            document.getElementById('timeSlider').value = curTime;
+    
+            //Update current time text
+            var timeText = '';
+            if(curHour < 10){
+                timeText = timeText + '0' + curHour + ':';
+            }else{
+                timeText = timeText + curHour + ':';
+            }
+            if(curTime%60 < 10){
+                timeText = timeText + '0' + curTime%60;
+            }else{
+                timeText = timeText + curTime%60;
+            }
+            document.getElementById('time').textContent =  timeText;
+    
+            if(curHour != preHour){
+                redraw();
+            }
+    
+            //Update loop
+            setTimeout(next, timeout);
+        }
+    }
+    
+    document.getElementById('timeSlider').addEventListener('change', function (e) {
+        curTime = parseInt(e.target.value);
         curHour = parseInt(curTime/60);
-        document.getElementById('timeSlider').value = curTime;
 
         //Update current time text
         var timeText = '';
@@ -116,94 +197,85 @@ function update() {
         }
         document.getElementById('time').textContent =  timeText;
 
-        if(curHour != preHour){
+        redraw();
+        // chartUpdate();
+    });
+    
+    document.getElementById('playButton').onclick = function(){ 
+        if(playControl == false){
+            playControl = true;
+            document.getElementById('playButton').setAttribute("disabled", true);
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
+            setTimeout(next, timeout);
+        }
+    };
+    document.getElementById('pauseButton').onclick = function(){
+        if(playControl == true){
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
+        }
+        playControl = false;
+        document.getElementById('playButton').removeAttribute("disabled");
+    };
+    
+    document.getElementById('speedSlider').addEventListener('input', function (e) {
+        var num = parseInt(e.target.value, 10);
+        interval = INTERVAL[num];
+        var newOption = {
+            series:[{
+                effect: {
+                    constantSpeed: interval * 4
+                },
+            }]
+        };
+        mychart.setOption(newOption);
+    });
+    
+    
+    
+    //layers control
+    document.getElementById('busControlInput').addEventListener('change', function(){
+        if($("#busControlInput").is(":checked")){
+            curLayer = 0;
+            document.getElementById('subwayControlInput').checked = false;
+            document.getElementById('taxiControlInput').checked = false;
+            redraw();
+        }else{
+            curlayer = -1;
             redraw();
         }
+    })
+    
+    document.getElementById('subwayControlInput').addEventListener('change', function(){
+        if($("#subwayControlInput").is(":checked")){
+            curLayer = 2;
+            document.getElementById('taxiControlInput').checked = false;
+            document.getElementById('busControlInput').checked = false;
+            redraw();
+        }else{
+            curlayer = -1;
+            redraw();
+        }
+    })
+    
+    document.getElementById('taxiControlInput').addEventListener('change', function(){
+        if($("#taxiControlInput").is(":checked")){
+            curLayer = 1;
+            document.getElementById('busControlInput').checked = false;
+            document.getElementById('subwayControlInput').checked = false;
+            redraw();
+        }else{
+            curlayer = -1;
+            redraw();
+        }
+    })
+    
 
-        //Update loop
-        setTimeout(update, timeout);
-    }
-}
-
-document.getElementById('timeSlider').addEventListener('change', function (e) {
-    curTime = parseInt(e.target.value);
-    curHour = parseInt(curTime/60);
-    redraw();
-    // chartUpdate();
-});
-
-document.getElementById('playButton').onclick = function(){ 
-    if(playControl == false){
-        playControl = true;
-        document.getElementById('playButton').setAttribute("disabled", true);
-        mychart.dispatchAction({
-            type: 'lines3DToggleEffect',
-            seriesIndex: 0
-        })
-        setTimeout(update, timeout);
-    }
-};
-document.getElementById('pauseButton').onclick = function(){
-    if(playControl == true){
-        mychart.dispatchAction({
-            type: 'lines3DToggleEffect',
-            seriesIndex: 0
-        })
-    }
-    playControl = false;
-    document.getElementById('playButton').removeAttribute("disabled");
-};
-
-document.getElementById('speedSlider').addEventListener('input', function (e) {
-    var num = parseInt(e.target.value, 10);
-    interval = INTERVAL[num];
-    var newOption = {
-        series:[{
-            effect: {
-                constantSpeed: interval * 3
-            },
-        }]
-    };
-    mychart.setOption(newOption);
-});
-
-
-
-//layers control
-document.getElementById('busControlInput').addEventListener('change', function(){
-    if($("#busControlInput").is(":checked")){
-        curLayer = 0;
-        document.getElementById('subwayControlInput').checked = false;
-        document.getElementById('taxiControlInput').checked = false;
-        redraw();
-    }else{
-        curlayer = -1;
-        redraw();
-    }
-})
-
-document.getElementById('subwayControlInput').addEventListener('change', function(){
-    if($("#subwayControlInput").is(":checked")){
-        curLayer = 2;
-        document.getElementById('taxiControlInput').checked = false;
-        document.getElementById('busControlInput').checked = false;
-        redraw();
-    }else{
-        curlayer = -1;
-        redraw();
-    }
-})
-
-document.getElementById('taxiControlInput').addEventListener('change', function(){
-    if($("#taxiControlInput").is(":checked")){
-        curLayer = 1;
-        document.getElementById('busControlInput').checked = false;
-        document.getElementById('subwayControlInput').checked = false;
-        redraw();
-    }else{
-        curlayer = -1;
-        redraw();
-    }
 })
 
 
