@@ -13,8 +13,7 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
     var curHour = parseInt(curTime/60);
     var preHour = curHour;
     
-    var environmentColor = 40;
-    var itemColor = 58;
+    var environmentColor = 80;
 
     var playControl = false; //true->is playing, false->pause
     var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
@@ -31,10 +30,10 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
         progressive: 2,
         geo3D:{
             map: 'sz',
-            environment: 'rgb(60,60,60)', //rgb(58,58,58)
+            environment: 'rgb(80,80,80)', //rgb(58,58,58)
             regionHeight: 0.5,
             itemStyle:{
-                color: 'rgb(50,50,50)', //rgb(48,48,48)
+                color: 'rgb(60,60,60)', //rgb(48,48,48)
                 borderWidth: 0,
                 //borderColor: 'rgb(66,66,66)' //rgb(66,66,66)
             },
