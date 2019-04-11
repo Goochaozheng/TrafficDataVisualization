@@ -13,9 +13,11 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
     var curHour = parseInt(curTime/60);
     var preHour = curHour;
     
+    var environmentColor = 40;
+    var itemColor = 58;
+
     var playControl = false; //true->is playing, false->pause
     var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
-    var layerChange = false; //true->layer switch
     
     function getData(){
         if(curLayer == 0) return bus_data[curHour];
@@ -27,21 +29,14 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
     var option = {
     
         progressive: 2,
-        // mapbox:{
-        //     style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
-        //     center: [114.0579, 22.5431],
-        //     zoom: 10,
-        //     maxZoom: 10.5,
-        //     minZoom: 9.5,
-        // },
         geo3D:{
             map: 'sz',
-            environment: '#3a3a3a',
-            regionHeight: 0,
+            environment: 'rgb(40,40,40)', //rgb(58,58,58)
+            regionHeight: 0.5,
             itemStyle:{
-                color: '#303030',
-                borderWidth: 1,
-                borderColor: '#424242'
+                color: 'rgb(18,18,18)', //rgb(48,48,48)
+                borderWidth: 0,
+                //borderColor: 'rgb(66,66,66)' //rgb(66,66,66)
             },
             shading: 'lambert',
             viewControl:{
@@ -55,8 +50,8 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
                     show: false
                 },
                 itemStyle:{
-                    color: '#303030',
-                    opacity: 0.99
+                    color: 'rgb(18,18,18)',
+                    opacity: 0.97
                 }
             }
 
@@ -67,18 +62,17 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
             coordinateSystem: 'geo3D',
             effect: {
                 show: true,
-                trailWidth: 1.5,
+                trailWidth: 2,
                 trailLength: 0.8,
                 trailOpacity: 0.8,
                 constantSpeed: interval * 4,
                 trailColor: '#911010'
-                //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
             polyline: true,
             large: true,
             lineStyle: {
-                width: 0.8,
+                width: 1,
                 color: '#6b0000',
                 opacity: 0.5
             },
@@ -114,7 +108,7 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
         
         var n_trailLength, n_lineOpacity, n_polyline;
         if(curLayer == 2){
-            n_trailLength = 0.2;
+            n_trailLength = 0.5;
             n_lineOpacity = 0.1;
             n_polyline = false;
         }else{
@@ -122,6 +116,20 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
             n_lineOpacity = 0.5;
             n_polyline = true;
         }
+
+        var n_environmentColor, n_itemColor;
+        if(environmentColor >= 58){
+            n_environmentColor = environmentColor - 1.5;
+        }else{
+            n_environmentColor = environmentColor + 1.5;
+        }
+        if(itemColor >= 48){
+            n_itemColor = itemColor - 2.5;
+        }else{
+            n_itemColor = itemColor + 2.5;
+        }
+        environmentColor = n_environmentColor;
+        itemColor = n_itemColor;
 
         //reset series data
         var newOption = {
