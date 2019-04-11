@@ -96,7 +96,7 @@ input[type=range]::-webkit-slider-thumb {
 }
 
 .chartBtn:disabled{
-    background-color: rgb(190, 190, 190);
+    background-color: #7a7a7a;
     color: rgb(255, 255, 255);
 
 }

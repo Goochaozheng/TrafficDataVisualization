@@ -69,25 +69,12 @@ var option = {
 
 }
 
-
 mychart.setOption(option);
 
 mychart.dispatchAction({
     type: 'lines3DToggleEffect',
     seriesIndex: 0
 })
-
-window.onresize = function(){
-    mychart.resize();
-        
-    //control line effect
-    if(playControl == false){
-        mychart.dispatchAction({
-            type: 'lines3DToggleEffect',
-            seriesIndex: 0
-        })
-    }
-}
 
 
 function redraw(){
@@ -106,11 +93,15 @@ function redraw(){
                 data: getData()
             }],
             visualMap:{
+                show:false,
                 min:0,
                 max:8000,
                 range: [0, 8000],
                 color: ['#fa6464', '#be1a1a', '#3f2a2a'],
                 dimension: '2'
+            },
+            tooltip:{
+                formatter: '{c}'
             }
         }
     }else{ //Flow
@@ -188,6 +179,7 @@ function next() {
 
         if(curHour != preHour){
             redraw();
+            chartUpdate();
         }
 
         //Update loop
@@ -206,9 +198,6 @@ document.getElementById('timeSlider').addEventListener('change', function (e) {
     curTime = parseInt(e.target.value);
     curHour = parseInt(curTime/60);
 
-    if(curHour == preHour){
-        alert(curHour);
-    }
 
     //Update current time text
     var timeText = '';
@@ -225,7 +214,7 @@ document.getElementById('timeSlider').addEventListener('change', function (e) {
     document.getElementById('time').textContent =  timeText;
 
     redraw();
-    // chartUpdate();
+    chartUpdate();
 });
 
 document.getElementById('playButton').onclick = function(){ 
@@ -280,9 +269,11 @@ document.getElementById('busControlInput').addEventListener('change', function()
         document.getElementById('subwayControlInput').checked = false;
         document.getElementById('taxiControlInput').checked = false;
         redraw();
+        chartUpdate();
     }else{
         curLayer = -1;
         redraw();
+        chartUpdate();
     }
 })
 
@@ -292,9 +283,11 @@ document.getElementById('subwayControlInput').addEventListener('change', functio
         document.getElementById('taxiControlInput').checked = false;
         document.getElementById('busControlInput').checked = false;
         redraw();
+        chartUpdate();
     }else{
         curLayer = -1;
         redraw();
+        chartUpdate();
     }
 })
 
@@ -304,9 +297,11 @@ document.getElementById('taxiControlInput').addEventListener('change', function(
         document.getElementById('busControlInput').checked = false;
         document.getElementById('subwayControlInput').checked = false;
         redraw();
+        chartUpdate();
     }else{
         curLayer = -1;
         redraw();
+        chartUpdate();
     }
 })
     
