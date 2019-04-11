@@ -10,15 +10,6 @@ body {
     width: 100%;
 }
 
-.boxdraw {
-    background: rgba(121, 121, 121, 0.164);
-    border: 2px solid #888888;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0;
-    height: 0;
-}
 
 input[type=range]{
     -webkit-appearance: none;
@@ -41,7 +32,7 @@ input[type=range]::-webkit-slider-thumb {
     width: 15px;
     border-radius: 50%;
     margin-top: -5px;
-    background: rgb(70, 70, 70);
+    background: #b63333;
     cursor: pointer;
 }
 
