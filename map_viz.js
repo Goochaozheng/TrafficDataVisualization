@@ -2,7 +2,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0N
     
 var mychart = echarts.init(document.getElementById('map'));
 
-var INTERVAL = [20, 16, 12, 8, 4, 2, 1]; //time update step size collection
+var INTERVAL = [1, 2, 4, 8, 12, 16, 20]; //time update step size collection
 var interval = INTERVAL[4]; //time update step size
 var timeout = 200; //update timeout
 
@@ -193,6 +193,10 @@ function next() {
 document.getElementById('timeSlider').addEventListener('change', function (e) {
     curTime = parseInt(e.target.value);
     curHour = parseInt(curTime/60);
+
+    if(curHour == preHour){
+        alert(curHour);
+    }
 
     //Update current time text
     var timeText = '';

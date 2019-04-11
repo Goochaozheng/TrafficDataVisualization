@@ -25,7 +25,7 @@
 
     <div id='map'></div>
 
-    <div class='map-overlay top'>
+    <div class='map-overlay top' style="margin-top:10px">
         <div class='map-overlay-inner'>
             <img src="resources/CityVessels.jpg" style="width: 90%">
 
@@ -38,7 +38,7 @@
                 <h2 class='time' id='time'>00:00</h2>
                 <input id='timeSlider' type='range' min='0' max='1439' step='1' value='0'/>
 
-                <div class='desc' style='margin-bottom: 10px; margin-top: 20px; width: 25%;'>Speed</div>
+                <div class='desc' style='margin-bottom: 10px; margin-top: 20px;'>Speed</div>
                 <input id='speedSlider' type='range' min='0' max='6' step='1' value='3' />
 
             </div>
@@ -46,38 +46,38 @@
      
         <div id='legend' >
             <ul class="list-group">
-                <li class="list-group-item" style='display: inline'>
+                <li class="list-group-item" id="layerControl">
 
                     <span>Bus</span>
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;" >
                             <input type="checkbox" class="custom-control-input"  id="busControlInput">
-                            <label class="custom-control-label" style="top:-3px;"  for="busControlInput" id="busControlLabel"></label>
+                            <label class="custom-control-label" style="top: -3px" for="busControlInput" id="busControlLabel"></label>
                         </div> 
                     </span>
 
                 </li>
-                <li class="list-group-item">
+                <li class="list-group-item" id="layerControl">
 
                     <span>Taxi</span>
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;">
                             <input type="checkbox" class="custom-control-input"  id="taxiControlInput" checked>
-                            <label class="custom-control-label" style="top:-3px;"  for="taxiControlInput" id="taxiControlLabel"></label>
+                            <label class="custom-control-label" style="top: -3px" for="taxiControlInput" id="taxiControlLabel"></label>
                         </div> 
                     </span>
 
                 </li>
-                <li class="list-group-item">
+                <li class="list-group-item" id="layerControl">
 
                     <span>Subway</span>
 
                     <span style="float:right">
                         <div class="custom-control custom-switch" style="display: inline;">
                             <input type="checkbox" class="custom-control-input"  id="subwayControlInput">
-                            <label class="custom-control-label" style="top:-3px;"  for="subwayControlInput" id="subwayControlLabel"></label>
+                            <label class="custom-control-label" style="top: -3px" for="subwayControlInput" id="subwayControlLabel"></label>
                         </div> 
                     </span>
 
@@ -85,11 +85,11 @@
             </ul>
         </div>       
 
-        <div class='map-overlay-inner' style="margin-top:10px">
-            <div class='desc' style="margin-top:10px">Magnitude</div>
+        <div class='map-overlay-inner' style="margin-top:10px; text-align: center">
+            <div class='desc'>Overall</div>
             <div id="chart" style="height: 200px"></div>
 
-            <div style="margin-top: 10px; margin-bottom:10px; text-align:center;">
+            <div style="margin-top: 10px; text-align:center;">
                 <div class="btn-group" role="group" aria-label="Basic example">
                     <button type="button" class="btn chartBtn" id="barBtn" disabled>Bar</button>
                     <button type="button" class="btn chartBtn" id="lineBtn">Line</button>
@@ -98,6 +98,22 @@
             </div>
         </div>
 
+        <div id='displayMode' style="margin-top:10px" >
+            <ul class="list-group">
+                <li class="list-group-item" id="layerControl">
+
+                    <span>Accumulate Mode</span>
+
+                    <span style="float:right">
+                        <div class="custom-control custom-switch" style="display: inline;" >
+                            <input type="checkbox" class="custom-control-input"  id="displayControlInput">
+                            <label class="custom-control-label" style="top: -3px" for="displayControlInput" id="displayControlLabel"></label>
+                        </div> 
+                    </span>
+
+                </li>
+            </ul>
+        </div>  
 
     </div>
 
