@@ -2,22 +2,21 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0N
     
 var mychart = echarts.init(document.getElementById('map'));
 
-//play control
-var INTERVAL = [20, 16, 12, 8, 4, 2, 1];
-var interval = INTERVAL[4];
-var timeout = 200;
+var INTERVAL = [20, 16, 12, 8, 4, 2, 1]; //time update step size collection
+var interval = INTERVAL[4]; //time update step size
+var timeout = 200; //update timeout
 
-var curTime = document.getElementById('timeSlider').value;
-var curHour = parseInt(curTime/60);
-var preHour = curHour;
+var curTime = document.getElementById('timeSlider').value; //current time to filter data
+var curHour = parseInt(curTime/60); //current hour
+var preHour = curHour; //hour of last frame
 
-var playControl = false; //true->is playing, false->pause
+var playControl = false; //true->playing, false->pause
 var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
-var layerChange = false; //true->layer switch
-var displayMode = 0; //1->flow, 0->bar
+var displayMode = 1; //1->flow, 0->bar
 
 
-//Return data of current hour
+//Return data of filtered by hour
+//according to the displaymode
 function getData(){
     if(displayMode == 1){//flow line
         if(curLayer == 0) return bus_data[curHour];
@@ -37,8 +36,8 @@ var option = {
         style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
         center: [113.976607, 22.600341],
         zoom: 11,
-        pitch: 60,
-        bearing: 20,
+        // pitch: 60,
+        // bearing: 20,
         light:{
             main:{
                 shadow: true,
