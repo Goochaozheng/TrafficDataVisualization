@@ -31,10 +31,10 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
         progressive: 2,
         geo3D:{
             map: 'sz',
-            environment: 'rgb(40,40,40)', //rgb(58,58,58)
+            environment: 'rgb(60,60,60)', //rgb(58,58,58)
             regionHeight: 0.5,
             itemStyle:{
-                color: 'rgb(18,18,18)', //rgb(48,48,48)
+                color: 'rgb(50,50,50)', //rgb(48,48,48)
                 borderWidth: 0,
                 //borderColor: 'rgb(66,66,66)' //rgb(66,66,66)
             },
@@ -50,7 +50,7 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
                     show: false
                 },
                 itemStyle:{
-                    color: 'rgb(18,18,18)',
+                    color: 'rgb(50,50,50)',
                     opacity: 0.97
                 }
             }
@@ -118,21 +118,32 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
         }
 
         var n_environmentColor, n_itemColor;
-        if(environmentColor >= 58){
-            n_environmentColor = environmentColor - 1.5;
+        if(curHour >= 12){
+            n_environmentColor = environmentColor - 10;
         }else{
-            n_environmentColor = environmentColor + 1.5;
+            n_environmentColor = environmentColor + 10;
         }
-        if(itemColor >= 48){
-            n_itemColor = itemColor - 2.5;
-        }else{
-            n_itemColor = itemColor + 2.5;
-        }
+        // if(itemColor >= 48){
+        //     n_itemColor = itemColor - 2.5;
+        // }else{
+        //     n_itemColor = itemColor + 2.5;
+        // }
         environmentColor = n_environmentColor;
-        itemColor = n_itemColor;
+        //itemColor = n_itemColor;
 
         //reset series data
         var newOption = {
+            geo3D:{
+                environment: 'rgb(' + n_environmentColor + ',' + n_environmentColor + ',' +n_environmentColor + ')',
+                // itemStyle:{
+                //     color: 'rgb(' + n_itemColor + ',' + n_itemColor + ',' + n_itemColor + ')',
+                // },
+                // emphasis:{
+                //     itemStyle:{
+                //         color: 'rgb(' + n_itemColor + ',' + n_itemColor + ',' + n_itemColor + ')'
+                //     }
+                // }
+            },
             series:[{
                 effect: {
                     constantSpeed: interval * 4,
