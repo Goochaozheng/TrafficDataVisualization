@@ -27,6 +27,7 @@ function getData(){
         if(curLayer == 1) return taxi_count[curHour];
         if(curLayer == 2) return subway_count[curHour];
     }
+
     if(curLayer == -1) return [];
 }
 
@@ -36,8 +37,6 @@ var option = {
         style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
         center: [113.976607, 22.600341],
         zoom: 11,
-        // pitch: 60,
-        // bearing: 20,
         light:{
             main:{
                 shadow: true,
@@ -102,12 +101,18 @@ function redraw(){
                 coordinateSystem: 'mapbox',
                 shading: 'lambert',
                 silent: true,
-                minHeight: 10,
+                minHeight: 5,
                 animationDurationUpdate: 60/interval * timeout,
                 data: getData()
-            }]
+            }],
+            visualMap:{
+                min:0,
+                max:8000,
+                range: [0, 8000],
+                color: ['#fa6464', '#be1a1a', '#3f2a2a'],
+                dimension: '2'
+            }
         }
-
     }else{ //Flow
 
         var n_trailLength, n_lineOpacity, n_polyline;
@@ -191,6 +196,13 @@ function next() {
 }
 
 document.getElementById('timeSlider').addEventListener('change', function (e) {
+
+    //stop playing
+    if(playControl == true){
+        playControl = false;
+        document.getElementById('playButton').removeAttribute("disabled");
+    }
+
     curTime = parseInt(e.target.value);
     curHour = parseInt(curTime/60);
 
@@ -299,41 +311,28 @@ document.getElementById('taxiControlInput').addEventListener('change', function(
 })
     
 
-
-// //Subway popup
-// // var subwayPopup = new mapboxgl.Popup({
-// //     closeButton: false,
-// //     closeOnClick: false
-// // });
-
-// // map.on('mouseenter', 'subway_circle', function(e) {
-
-// //     map.getCanvas().style.cursor = 'pointer';
-     
-// //     var coordinates = e.features[0].geometry.coordinates.slice();
-// //     var description = e.features[0].properties.station;
-// //     var count = 0;
-// //     for(var i=0; i<e.features.length; i++){
-// //         count += e.features[i].properties.count;
-// //     }
-     
-// //     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-// //         coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-// //     }
-     
-// //     subwayPopup.setLngLat(coordinates)
-// //     .setHTML(
-// //         "<span class='subway'>" + description + ": </span>" + 
-// //         "<span>" + count + "</span>"
-// //     )
-// //     .addTo(map);
-// // });
-
-// // map.on('mouseleave', 'subway_circle', function() {
-// //     map.getCanvas().style.cursor = '';
-// //     subwayPopup.remove();
-// // });
-
+//display mode control
+document.getElementById('displayControlInput').addEventListener('change', function(){
+    if($("#displayControlInput").is(":checked")){
+        displayMode = 0;
+        mychart.setOption({
+            mapbox3D:{
+                pitch: 60,
+                bearing: 20
+            },
+        })
+        redraw();
+    }else{
+        displayMode = 1;
+        mychart.setOption({
+            mapbox3D:{
+                pitch: 0,
+                bearing: 0
+            },
+        })
+        redraw();
+    }
+})
 
 
 
