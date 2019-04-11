@@ -112,13 +112,15 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
     
     function redraw(){
         
-        var n_trailLength, n_lineOpacity;
+        var n_trailLength, n_lineOpacity, n_polyline;
         if(curLayer == 2){
             n_trailLength = 0.2;
             n_lineOpacity = 0.1;
+            n_polyline = false;
         }else{
             n_trailLength = 0.8;
             n_lineOpacity = 0.5;
+            n_polyline = true;
         }
 
         //reset series data
@@ -131,6 +133,7 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
                 lineStyle:{
                     opacity: n_lineOpacity
                 },
+                polyline: n_polyline,
                 data: getData()
             }]
         };
