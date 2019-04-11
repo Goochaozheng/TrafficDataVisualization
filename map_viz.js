@@ -6,6 +6,7 @@ var mychart = echarts.init(document.getElementById('map'));
 var INTERVAL = [20, 16, 12, 8, 4, 2, 1];
 var interval = INTERVAL[4];
 var timeout = 200;
+
 var curTime = document.getElementById('timeSlider').value;
 var curHour = parseInt(curTime/60);
 var preHour = curHour;
@@ -15,12 +16,14 @@ var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
 var layerChange = false; //true->layer switch
 var displayMode = 0; //1->flow, 0->bar
 
+
+//Return data of current hour
 function getData(){
-    if(displayMode == 1){
+    if(displayMode == 1){//flow line
         if(curLayer == 0) return bus_data[curHour];
         if(curLayer == 1) return taxi_data[curHour];
         if(curLayer == 2) return subway_data[curHour];
-    }else{
+    }else{//bar
         if(curLayer == 0) return bus_count[curHour];
         if(curLayer == 1) return taxi_count[curHour];
         if(curLayer == 2) return subway_count[curHour];
@@ -45,37 +48,26 @@ var option = {
         }
     },
     series:[
-    //     {
-    //     type: 'lines3D',
-    //     coordinateSystem: 'mapbox3D',
-    //     effect: {
-    //         show: true,
-    //         trailWidth: 1.5,
-    //         trailLength: 0.8,
-    //         trailOpacity: 0.8,
-    //         constantSpeed: interval * 4,
-    //         trailColor: '#911010'
-    //     },
-    //     blendMode: 'lighter',
-    //     polyline: true,
-    //     large: true,
-    //     lineStyle: {
-    //         width: 0.8,
-    //         color: '#6b0000',
-    //         opacity: 0.5
-    //     },
-    //     zLevel: 0,
-    //     data: getData()
-    // }
-    {
-        type: 'bar3D',
+        {
+        type: 'lines3D',
         coordinateSystem: 'mapbox',
-        barSize: 0.6,
-        shading: 'lambert',
-        silent: true,
-        data: subway_count[curHour]
-    }
-]
+        effect: {
+            show: true,
+            trailWidth: 1.5,
+            trailLength: 0.8,
+            trailOpacity: 0.8,
+            constantSpeed: interval * 4,
+            trailColor: '#911010'
+        },
+        blendMode: 'lighter',
+        polyline: true,
+        lineStyle: {
+            width: 0.8,
+            color: '#6b0000',
+            opacity: 0.5
+        },
+        data: getData()
+    }]
 
 }
 
@@ -103,22 +95,21 @@ window.onresize = function(){
 function redraw(){
 
     //reset series data
-    if(displayMode == 0){
-
-        console.log(getData())
+    if(displayMode == 0){ //Bar
 
         var newOption = {
             series:[{
                 type: 'bar3D',
                 coordinateSystem: 'mapbox',
-                barSize: 0.6,
                 shading: 'lambert',
                 silent: true,
+                minHeight: 10,
+                animationDurationUpdate: 60/interval * timeout,
                 data: getData()
             }]
         }
 
-    }else{
+    }else{ //Flow
 
         var n_trailLength, n_lineOpacity, n_polyline;
         if(curLayer == 2){
@@ -133,14 +124,23 @@ function redraw(){
 
         var newOption = {
             series:[{
+                type: 'lines3D',
+                coordinateSystem: 'mapbox3D',
                 effect: {
+                    show: true,
+                    trailWidth: 1.5,
+                    trailLength: n_trailLength,
+                    trailOpacity: 0.8,
                     constantSpeed: interval * 4,
-                    trailLength: n_trailLength
+                    trailColor: '#911010'
                 },
-                lineStyle:{
+                blendMode: 'lighter',
+                polyline: n_polyline,
+                lineStyle: {
+                    width: 0.8,
+                    color: '#6b0000',
                     opacity: n_lineOpacity
                 },
-                polyline: n_polyline,
                 data: getData()
             }]
         };
