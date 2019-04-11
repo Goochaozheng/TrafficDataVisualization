@@ -26,45 +26,15 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
     
     var option = {
     
-        progressive: 2,
-        // mapbox:{
-        //     style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
-        //     center: [114.0579, 22.5431],
-        //     zoom: 10,
-        //     maxZoom: 10.5,
-        //     minZoom: 9.5,
-        // },
-        geo3D:{
-            map: 'sz',
-            environment: '#3a3a3a',
-            regionHeight: 0,
-            itemStyle:{
-                color: '#303030',
-                borderWidth: 1,
-                borderColor: '#424242'
-            },
-            shading: 'lambert',
-            viewControl:{
-                panMouseButton: 'left',
-                rotateMouseButton: 'right',
-                rotateSensitivity: 0.5,
-                panSensitivity: 0.5
-            },
-            emphasis:{
-                label:{
-                    show: false
-                },
-                itemStyle:{
-                    color: '#303030',
-                    opacity: 0.99
-                }
-            }
-
+        mapbox:{
+            style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
+            center: [113.976607, 22.600341],
+            zoom: 11,
         },
         series:[
             {
             type: 'lines3D',
-            coordinateSystem: 'geo3D',
+            coordinateSystem: 'mapbox',
             effect: {
                 show: true,
                 trailWidth: 1.5,
@@ -72,7 +42,6 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
                 trailOpacity: 0.8,
                 constantSpeed: interval * 4,
                 trailColor: '#911010'
-                //period: (60*timeout)/(interval*1000) 
             },
             blendMode: 'lighter',
             polyline: true,
@@ -237,6 +206,14 @@ $.getJSON('data/Shenzhen.json', function(sz_json){
             }]
         };
         mychart.setOption(newOption);
+
+        //control line effect
+        if(playControl == false){
+            mychart.dispatchAction({
+                type: 'lines3DToggleEffect',
+                seriesIndex: 0
+            })
+        }
     });
     
     
