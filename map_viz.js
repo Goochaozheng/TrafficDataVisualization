@@ -21,8 +21,8 @@ function getData(){
         if(curLayer == 1) return taxi_data[curHour];
         if(curLayer == 2) return subway_data[curHour];
     }else{
-        if(curLayer == 0) return bus_data[curHour];
-        if(curLayer == 1) return taxi_data[curHour];
+        if(curLayer == 0) return bus_count[curHour];
+        if(curLayer == 1) return taxi_count[curHour];
         if(curLayer == 2) return subway_count[curHour];
     }
     if(curLayer == -1) return [];
@@ -73,7 +73,7 @@ var option = {
         barSize: 0.6,
         shading: 'lambert',
         silent: true,
-        data: subway_count[11]
+        data: subway_count[curHour]
     }
 ]
 
@@ -102,31 +102,50 @@ window.onresize = function(){
 
 function redraw(){
 
-    var n_trailLength, n_lineOpacity, n_polyline;
-    if(curLayer == 2){
-        n_trailLength = 0.2;
-        n_lineOpacity = 0.1;
-        n_polyline = false;
+    //reset series data
+    if(displayMode == 0){
+
+        console.log(getData())
+
+        var newOption = {
+            series:[{
+                type: 'bar3D',
+                coordinateSystem: 'mapbox',
+                barSize: 0.6,
+                shading: 'lambert',
+                silent: true,
+                data: getData()
+            }]
+        }
+
     }else{
-        n_trailLength = 0.8;
-        n_lineOpacity = 0.5;
-        n_polyline = true;
+
+        var n_trailLength, n_lineOpacity, n_polyline;
+        if(curLayer == 2){
+            n_trailLength = 0.2;
+            n_lineOpacity = 0.1;
+            n_polyline = false;
+        }else{
+            n_trailLength = 0.8;
+            n_lineOpacity = 0.5;
+            n_polyline = true;
+        }
+
+        var newOption = {
+            series:[{
+                effect: {
+                    constantSpeed: interval * 4,
+                    trailLength: n_trailLength
+                },
+                lineStyle:{
+                    opacity: n_lineOpacity
+                },
+                polyline: n_polyline,
+                data: getData()
+            }]
+        };
     }
 
-    //reset series data
-    var newOption = {
-        series:[{
-            effect: {
-                constantSpeed: interval * 4,
-                trailLength: n_trailLength
-            },
-            lineStyle:{
-                opacity: n_lineOpacity
-            },
-            polyline: n_polyline,
-            data: getData()
-        }]
-    };
     mychart.setOption(newOption);
     
 
