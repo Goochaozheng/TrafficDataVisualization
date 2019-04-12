@@ -77,6 +77,11 @@ function chartUpdate() {
         t_color = '#7a7a7a';
         b_color = '#a1a1a1';
     }
+    if(curLayer == -1){
+        s_color = '#8b8b8b';
+        t_color = '#7a7a7a';
+        b_color = '#a1a1a1';
+    }
 
     //Update as bar chart
     if(chartType == 0){
