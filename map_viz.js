@@ -2,7 +2,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZ29vY2hhb3poZW5nIiwiYSI6ImNqdDczdXQzNDA2Nng0N
     
 var mychart = echarts.init(document.getElementById('map'));
 
-var INTERVAL = [1, 2, 4, 8, 12, 16, 20]; //time update step size collection
+var INTERVAL = [1, 2, 4, 6, 8, 10, 12]; //time update step size collection
 var interval = INTERVAL[4]; //time update step size
 var timeout = 200; //update timeout
 
@@ -12,7 +12,7 @@ var preHour = curHour; //hour of last frame
 
 var playControl = false; //true->playing, false->pause
 var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
-var displayMode = 1; //1->flow, 0->bar
+var displayMode = 1; //1->track, 0->stack
 
 
 //Return data of filtered by hour
@@ -22,7 +22,7 @@ function getData(){
         if(curLayer == 0) return bus_data[curHour];
         if(curLayer == 1) return taxi_data[curHour];
         if(curLayer == 2) return subway_data[curHour];
-    }else{//bar
+    }else{//stack bar
         if(curLayer == 0) return bus_count[curHour];
         if(curLayer == 1) return taxi_count[curHour];
         if(curLayer == 2) return subway_count[curHour];
@@ -43,7 +43,9 @@ var option = {
                 intensity: 1.5,
                 shadowQuality: 'medium'
             }
-        }
+        },
+        pitch: 40,
+        bearing: 20
     },
     series:[
         {
@@ -307,27 +309,19 @@ document.getElementById('taxiControlInput').addEventListener('change', function(
     
 
 //display mode control
-document.getElementById('displayControlInput').addEventListener('change', function(){
-    if($("#displayControlInput").is(":checked")){
-        displayMode = 0;
-        mychart.setOption({
-            mapbox3D:{
-                pitch: 60,
-                bearing: 20
-            },
-        })
-        redraw();
-    }else{
-        displayMode = 1;
-        mychart.setOption({
-            mapbox3D:{
-                pitch: 0,
-                bearing: 0
-            },
-        })
-        redraw();
-    }
-})
+document.getElementById('stackBtn').onclick = function(){ 
+    displayMode = 0;
+    document.getElementById('stackBtn').setAttribute("disabled", true);
+    document.getElementById('trackBtn').removeAttribute("disabled");
+    redraw();
+};
+
+document.getElementById('trackBtn').onclick = function(){ 
+    displayMode = 1;
+    document.getElementById('trackBtn').setAttribute("disabled", true);
+    document.getElementById('stackBtn').removeAttribute("disabled");
+    redraw();
+};
 
 
 

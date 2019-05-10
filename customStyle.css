@@ -105,6 +105,41 @@ input[type=range]::-webkit-slider-thumb {
     outline:none;
 }
 
+/*  */
+.modeBtn{
+    appearance: none;
+    background-color:  rgb(65, 65, 65);
+    color: rgb(255, 255, 255);
+    width: 80px;
+    border-radius: 5px;
+    border-width: 0;
+    box-shadow:none;
+    height: 50px;
+    padding: 5px;
+    font-size: 14px;
+    opacity: 50%;
+}
+
+.modeBtn:hover{
+    background-color:  rgb(51, 51, 51);
+    color: rgb(255, 255, 255);
+}
+
+.modeBtn:active{
+    background-color:  rgb(66, 66, 66);
+    color: rgb(255, 255, 255);
+}
+
+.modeBtn:disabled{
+    background-color: #181818;
+    color: rgb(255, 255, 255);
+}
+
+.modeBtn:focus{
+    outline:none;
+}
+
+
 #busControlInput:checked~#busControlLabel::before {
     color: #fff;
     border-color: #b63333;
@@ -140,6 +175,7 @@ input[type=range]::-webkit-slider-thumb {
 .desc{
     color:rgb(0, 0, 0);
     margin-bottom: 0;
+    text-align: center;
 }
 
 .playControl{
