@@ -11,9 +11,9 @@ var curHour = parseInt(curTime/60); //current hour
 var preHour = curHour; //hour of last frame
 
 var playControl = false; //true->playing, false->pause
+var rotateControl = false; //true->auto rotate, false->stop
 var curLayer = 1; //0->bus, 1->taxi, 2->subway, -1->null
 var displayMode = 1; //1->track, 0->stack
-
 
 //Return data of filtered by hour
 //according to the displaymode
@@ -35,8 +35,8 @@ var option = {
 
     mapbox:{
         style: 'mapbox://styles/goochaozheng/cjtmxzx0x51aw1fpebmqa6dgm',
-        center: [113.976607, 22.600341],
-        zoom: 11,
+        center: [114.0035595, 22.5809750],
+        zoom: 11.7,
         light:{
             main:{
                 shadow: true,
@@ -44,7 +44,7 @@ var option = {
                 shadowQuality: 'medium'
             }
         },
-        pitch: 40,
+        pitch: 50,
         bearing: 20
     },
     series:[
@@ -78,6 +78,7 @@ mychart.dispatchAction({
     seriesIndex: 0
 })
 
+var mapbox = mychart.getModel().getComponent('mapbox3D').getMapbox();
 
 function redraw(){
 
@@ -128,7 +129,7 @@ function redraw(){
                     trailWidth: 1.5,
                     trailLength: n_trailLength,
                     trailOpacity: 0.8,
-                    constantSpeed: interval * 4,
+                    constantSpeed: interval * interval,
                     trailColor: '#911010'
                 },
                 blendMode: 'lighter',
@@ -189,6 +190,16 @@ function next() {
     }
 }
 
+function rotateCamera(){
+    if(rotateControl){
+        var curBearing = mapbox.getBearing();
+        mapbox.rotateTo((curBearing + 0.1) % 360, {duration: 0.1});
+        requestAnimationFrame(rotateCamera);
+    }
+}
+
+
+//Time Control
 document.getElementById('timeSlider').addEventListener('change', function (e) {
 
     //stop playing
@@ -219,6 +230,7 @@ document.getElementById('timeSlider').addEventListener('change', function (e) {
     chartUpdate();
 });
 
+//Play Control
 document.getElementById('playButton').onclick = function(){ 
     if(playControl == false){
         playControl = true;
@@ -240,7 +252,18 @@ document.getElementById('pauseButton').onclick = function(){
     playControl = false;
     document.getElementById('playButton').removeAttribute("disabled");
 };
+document.getElementById('rotateButton').onclick = function(){
+    if(rotateControl){
+        rotateControl = false;
+    }else{
+        rotateControl = true;
+        rotateCamera();
+    }
+    
+}
 
+
+//Speed Control
 document.getElementById('speedSlider').addEventListener('input', function (e) {
     var num = parseInt(e.target.value, 10);
     interval = INTERVAL[num];
@@ -261,7 +284,6 @@ document.getElementById('speedSlider').addEventListener('input', function (e) {
         })
     }
 });
-
 
 
 //layers control

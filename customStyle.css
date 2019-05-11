@@ -54,6 +54,8 @@ input[type=range]::-webkit-slider-thumb {
     margin-bottom: 15px;
     box-shadow:none;
     padding: 4px 8px;
+    height: 40px;
+    width: 40px;
 }
 
 .ctrBtn:hover{
